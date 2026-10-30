@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MahimHossainBD</title>
+<title>MahimHossainBD — Official App & Web Store</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 :root {
@@ -22,27 +22,33 @@ a { text-decoration:none; color:inherit; }
 button { font-family:inherit; cursor:pointer; border:none; }
 .container { width:min(1100px, 92%); margin:auto; }
 
+/* TOP NAV */
 .topnav-wrap {
     position:sticky; top:0; z-index:100; background:rgba(5,7,11,0.85);
     backdrop-filter:blur(14px); border-bottom:1px solid var(--border); padding:12px 0;
 }
 .topnav-inner { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.topnav { display:flex; justify-content:center; align-items:center; gap:8px; flex:1; overflow-x:auto; }
+.topnav { display:flex; justify-content:center; align-items:center; gap:8px; flex:1; overflow-x:auto; scrollbar-width:none; }
+.topnav::-webkit-scrollbar { display:none; }
+
 .nav-btn {
     padding:11px 20px; border-radius:12px; background:transparent; color:var(--muted);
-    font-size:14px; font-weight:700; display:flex; align-items:center; gap:7px;
+    font-size:14px; font-weight:700; display:flex; align-items:center; gap:7px; cursor:pointer;
+    white-space:nowrap; transition: .25s;
 }
+.nav-btn:hover { background:rgba(255,255,255,0.06); color:var(--text); }
 .nav-btn.active { background:var(--grad-blue); color:#fff; box-shadow:0 6px 18px rgba(22,119,255,0.4); }
 
 .lang-switch { display:flex; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:11px; padding:3px; }
 .lang-btn { padding:7px 12px; border-radius:8px; background:transparent; color:var(--muted); font-size:12px; font-weight:800; cursor:pointer; }
 .lang-btn.active { background:var(--grad-blue); color:#fff; }
 
+/* HEADER */
 header { padding:34px 0 15px; text-align:center; }
 .logo {
     width:110px; height:110px; object-fit:cover; border-radius:50%;
     border:3px solid var(--blue); box-shadow:0 0 40px rgba(22,119,255,0.4);
-    animation:logoPulse 4s ease-in-out infinite;
+    animation:logoPulse 4s ease-in-out infinite; background:#111;
 }
 @keyframes logoPulse { 0%,100% { box-shadow:0 0 40px rgba(22,119,255,0.4); } 50% { box-shadow:0 0 55px rgba(22,119,255,0.7); } }
 .name { margin-top:18px; font-size:clamp(28px,6vw,48px); font-weight:800; background:linear-gradient(135deg,#fff,#a9c9ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -53,16 +59,27 @@ header { padding:34px 0 15px; text-align:center; }
 .section-title { text-align:center; font-size:25px; margin-bottom:22px; }
 .section-title span { color:var(--blue); }
 
+/* LINKS */
 .links { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
-.link-card { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:20px; padding:24px 20px; text-align:center; }
-.icon { width:58px; height:58px; margin:0 auto 15px; border-radius:16px; background:rgba(22,119,255,0.12); border:1px solid rgba(22,119,255,0.25); display:flex; align-items:center; justify-content:center; color:var(--blue); font-size:26px; }
+.link-card {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:20px;
+    padding:24px 20px; text-align:center; transition:.3s; backdrop-filter:blur(10px);
+}
+.link-card:hover { transform:translateY(-5px); border-color:var(--blue); }
+.icon {
+    width:58px; height:58px; margin:0 auto 15px; border-radius:16px;
+    background:rgba(22,119,255,0.12); border:1px solid rgba(22,119,255,0.25);
+    display:flex; align-items:center; justify-content:center; color:var(--blue); font-size:26px;
+}
 .visit-btn { display:inline-block; padding:10px 18px; border-radius:10px; background:var(--grad-blue); color:white; font-size:14px; font-weight:700; margin-top:12px; }
+.disabled { opacity:.5; cursor:not-allowed; background:#333 !important; }
 
+/* APPS */
 .search-wrap { max-width:520px; margin:0 auto 18px; }
 .search-wrap input { width:100%; padding:12px 18px; border-radius:14px; background:var(--dark-2); border:1px solid var(--border); color:#fff; outline:none; }
 .apps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:18px; }
 .app-card { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; position:relative; }
-.app-thumb { width:100%; height:150px; object-fit:cover; border-bottom:1px solid var(--border); }
+.app-thumb { width:100%; height:150px; object-fit:cover; border-bottom:1px solid var(--border); background:#111; }
 .app-body { padding:16px 18px; flex:1; display:flex; flex-direction:column; }
 .meta-row { display:flex; gap:8px; margin-bottom:8px; font-size:11px; }
 .tag-pill { padding:3px 9px; border-radius:20px; background:rgba(22,119,255,0.15); color:#7ab8ff; font-weight:700; }
@@ -70,13 +87,14 @@ header { padding:34px 0 15px; text-align:center; }
 
 .btn-sm { padding:8px 14px; border-radius:9px; font-size:13px; font-weight:700; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
 .btn-dl { background:var(--grad-green); color:#fff; }
-.btn-vid { background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); }
+.btn-vid { background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); cursor:pointer; }
 
 .contact { margin:10px auto 45px; max-width:650px; background:var(--dark-card); border:1px solid var(--border); border-radius:20px; padding:24px; text-align:center; }
 .email { color:var(--blue); font-size:15px; }
 
 footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; color:var(--muted); font-size:13px; }
 .footer-admin { display:inline-block; margin-top:8px; color:#1a2330; font-size:11px; cursor:pointer; text-decoration:none; }
+.footer-admin:hover { color:#4a5d78; }
 
 .video-modal { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; padding:20px; z-index:1500; }
 .video-box { width:min(900px,100%); background:#0d1118; border:1px solid var(--border); border-radius:16px; padding:16px; }
@@ -101,27 +119,49 @@ footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; 
     </div>
 </div>
 
+<!-- ================= PROFILE VIEW ================= -->
 <div id="view-profile">
     <header>
         <div class="container">
-            <img class="logo" id="pfLogo" src="" alt="Logo">
+            <img class="logo" id="pfLogo" src="https://i.postimg.cc/X7kpKwx7/Picsart-26-09-07-22-20-41-182.jpg" alt="Logo">
             <h1 class="name" id="pfName">MahimHossainBD</h1>
             <div class="tagline" id="pfTagline">Developer and create app</div>
-            <p class="about" id="pfAbout"></p>
+            <p class="about" id="pfAbout">আমি হলো একজন Developer এবং তোমাদের App, ওয়েবসাইট বানানো শিখাই।</p>
         </div>
     </header>
     <main class="container">
         <section class="section">
             <h2 class="section-title">Online <span>Links</span></h2>
-            <div class="links" id="linksGrid"></div>
+            <div class="links" id="linksGrid">
+                <!-- Fallback Links যাতে কখনো খালি না থাকে -->
+                <div class="link-card">
+                    <div class="icon">▶️</div>
+                    <h3>YouTube</h3>
+                    <p style="color:var(--muted); font-size:13px;">Channel link নেই</p>
+                    <span class="visit-btn disabled">Unavailable</span>
+                </div>
+                <div class="link-card">
+                    <div class="icon">🎵</div>
+                    <h3>TikTok</h3>
+                    <p style="color:var(--muted); font-size:13px;">@mahimhossainbd</p>
+                    <a class="visit-btn" href="https://tiktok.com/@mahimhossainbd" target="_blank">Visit</a>
+                </div>
+                <div class="link-card">
+                    <div class="icon">✈️</div>
+                    <h3>Telegram</h3>
+                    <p style="color:var(--muted); font-size:13px;">@MahimHossainBD</p>
+                    <a class="visit-btn" href="https://t.me/MahimHossainBD" target="_blank">Visit</a>
+                </div>
+            </div>
         </section>
         <section class="contact">
             <h2 style="font-size:20px; margin-bottom:8px;">Contact</h2>
-            <a class="email" id="pfEmail" href="#">MahimHossainBD@gmail.com</a>
+            <a class="email" id="pfEmail" href="mailto:MahimHossainBD@gmail.com">MahimHossainBD@gmail.com</a>
         </section>
     </main>
 </div>
 
+<!-- ================= APP STORE VIEW ================= -->
 <div id="view-store" style="display:none;">
     <main class="container">
         <section class="section">
@@ -129,16 +169,21 @@ footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; 
             <div class="search-wrap">
                 <input type="text" id="appSearch" placeholder="অ্যাপের নাম দিয়ে খুঁজুন...">
             </div>
-            <div id="appsGrid" class="apps-grid"></div>
+            <div id="appsGrid" class="apps-grid">
+                <div style="text-align:center; grid-column:1/-1; padding:30px; color:var(--muted);">অ্যাপ লোড হচ্ছে বা অ্যাডমিন প্যানেল থেকে নতুন অ্যাপ যোগ করুন...</div>
+            </div>
         </section>
     </main>
 </div>
 
+<!-- ================= WEBSITE STORE VIEW ================= -->
 <div id="view-web" style="display:none;">
     <main class="container">
         <section class="section">
             <h2 class="section-title">🌐 ওয়েবসাইট <span>স্টোর</span></h2>
-            <div id="webGrid" class="apps-grid"></div>
+            <div id="webGrid" class="apps-grid">
+                <div style="text-align:center; grid-column:1/-1; padding:30px; color:var(--muted);">কোনো ওয়েবসাইট যোগ করা হয়নি।</div>
+            </div>
         </section>
     </main>
 </div>
@@ -152,80 +197,111 @@ footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; 
 </div>
 
 <footer>
-    © <span id="year"></span> MahimHossainBD. All rights reserved.
+    © <span id="year">2026</span> MahimHossainBD. All rights reserved.
     <br>
     <a href="/login" class="footer-admin">· admin portal ·</a>
 </footer>
 
 <script>
 let currentLang = 'bn';
-let cachedProfile = {};
+let cachedProfile = {
+    name: 'MahimHossainBD',
+    tagline: 'Developer and create app',
+    about_bn: 'আমি হলো একজন Developer এবং তোমাদের App, ওয়েবসাইট বানানো শিখাই।',
+    about_en: 'I am a Developer teaching you how to build modern apps and websites.',
+    email: 'MahimHossainBD@gmail.com',
+    logo_url: 'https://i.postimg.cc/X7kpKwx7/Picsart-26-09-07-22-20-41-182.jpg'
+};
 
+// নিরাপদ ডাটা লোডার (সার্ভারে কোনো এরর থাকলেও সাইট ক্র্যাশ করবে না)
 async function initSite() {
-    document.getElementById('year').textContent = new Date().getFullYear();
+    try {
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-    // 1. প্রোফাইল লোড
-    const pData = await (await fetch('/api/profile')).json();
-    if (pData.success) {
-        cachedProfile = pData.profile;
-        document.getElementById('pfLogo').src = pData.profile.logo_url;
-        document.getElementById('pfName').textContent = pData.profile.name;
-        document.getElementById('pfTagline').textContent = pData.profile.tagline;
-        document.getElementById('pfAbout').textContent = currentLang === 'bn' ? pData.profile.about_bn : pData.profile.about_en;
-        document.getElementById('pfEmail').textContent = pData.profile.email;
-        document.getElementById('pfEmail').href = `mailto:${pData.profile.email}`;
+        // ১. প্রোফাইল লোড
+        try {
+            const res = await fetch('/api/profile');
+            const pData = await res.json();
+            if (pData && pData.success && pData.profile) {
+                cachedProfile = pData.profile;
+                document.getElementById('pfLogo').src = pData.profile.logo_url || cachedProfile.logo_url;
+                document.getElementById('pfName').textContent = pData.profile.name || cachedProfile.name;
+                document.getElementById('pfTagline').textContent = pData.profile.tagline || cachedProfile.tagline;
+                document.getElementById('pfAbout').textContent = currentLang === 'bn' ? (pData.profile.about_bn || cachedProfile.about_bn) : (pData.profile.about_en || cachedProfile.about_en);
+                document.getElementById('pfEmail').textContent = pData.profile.email || cachedProfile.email;
+                document.getElementById('pfEmail').href = `mailto:${pData.profile.email || cachedProfile.email}`;
 
-        const lGrid = document.getElementById('linksGrid');
-        lGrid.innerHTML = '';
-        (pData.links || []).forEach(l => {
-            lGrid.innerHTML += `
-                <div class="link-card">
-                    <div class="icon">🔗</div>
-                    <h3>${l.name}</h3>
-                    <p style="color:var(--muted); font-size:13px;">${l.username_handle || ''}</p>
-                    <a class="visit-btn" href="${l.url}" target="_blank">Visit</a>
-                </div>
-            `;
-        });
+                if (pData.links && pData.links.length > 0) {
+                    const lGrid = document.getElementById('linksGrid');
+                    lGrid.innerHTML = '';
+                    pData.links.forEach(l => {
+                        const hasUrl = l.url && l.url.trim().length > 0;
+                        lGrid.innerHTML += `
+                            <div class="link-card">
+                                <div class="icon">🔗</div>
+                                <h3>${l.name}</h3>
+                                <p style="color:var(--muted); font-size:13px;">${l.username_handle || ''}</p>
+                                ${hasUrl ? `<a class="visit-btn" href="${l.url}" target="_blank">Visit</a>` : `<span class="visit-btn disabled">Unavailable</span>`}
+                            </div>
+                        `;
+                    });
+                }
+            }
+        } catch (e) {
+            console.log('Profile loading from local fallback.');
+        }
+
+        // ২. অ্যাপস লোড
+        try {
+            const aRes = await fetch('/api/apps');
+            const aData = await aRes.json();
+            if (aData && aData.success && aData.data && aData.data.length > 0) {
+                const aGrid = document.getElementById('appsGrid');
+                aGrid.innerHTML = '';
+                aData.data.forEach(a => {
+                    aGrid.innerHTML += `
+                        <div class="app-card">
+                            <img class="app-thumb" src="${a.image_url || cachedProfile.logo_url}">
+                            <div class="app-body">
+                                <h3>${a.name}</h3>
+                                <div class="meta-row"><span class="tag-pill">${a.category || 'App'}</span></div>
+                                <div class="desc">${a.description_bn || ''}</div>
+                                <div style="display:flex; gap:8px;">
+                                    <a class="btn-sm btn-dl" href="${a.file_url}" target="_blank" download>⬇️ ডাউনলোড</a>
+                                    ${a.video_url ? `<button class="btn-sm btn-vid" onclick="playVideo('${a.video_url}')">🎬 ভিডিও</button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        } catch (e) {}
+
+        // ৩. ওয়েবসাইট লোড
+        try {
+            const wRes = await fetch('/api/websites');
+            const wData = await wRes.json();
+            if (wData && wData.success && wData.data && wData.data.length > 0) {
+                const wGrid = document.getElementById('webGrid');
+                wGrid.innerHTML = '';
+                wData.data.forEach(w => {
+                    wGrid.innerHTML += `
+                        <div class="app-card">
+                            <img class="app-thumb" src="${w.thumbnail_url || cachedProfile.logo_url}">
+                            <div class="app-body">
+                                <h3>${w.name}</h3>
+                                <div class="desc">${w.description_bn || ''}</div>
+                                <a class="btn-sm btn-dl" href="${w.url}" target="_blank">🌐 ভিজিট</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        } catch (e) {}
+
+    } catch (globalErr) {
+        console.error('Safe loader handled error:', globalErr);
     }
-
-    // 2. অ্যাপস লোড
-    const aData = await (await fetch('/api/apps')).json();
-    const aGrid = document.getElementById('appsGrid');
-    aGrid.innerHTML = '';
-    (aData.data || []).forEach(a => {
-        aGrid.innerHTML += `
-            <div class="app-card">
-                <img class="app-thumb" src="${a.image_url}">
-                <div class="app-body">
-                    <h3>${a.name}</h3>
-                    <div class="meta-row"><span class="tag-pill">${a.category}</span></div>
-                    <div class="desc">${a.description_bn}</div>
-                    <div style="display:flex; gap:8px;">
-                        <a class="btn-sm btn-dl" href="${a.file_url}" target="_blank" download>⬇️ ডাউনলোড</a>
-                        ${a.video_url ? `<button class="btn-sm btn-vid" onclick="playVideo('${a.video_url}')">🎬 ভিডিও</button>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-
-    // 3. ওয়েবসাইট লোড
-    const wData = await (await fetch('/api/websites')).json();
-    const wGrid = document.getElementById('webGrid');
-    wGrid.innerHTML = '';
-    (wData.data || []).forEach(w => {
-        wGrid.innerHTML += `
-            <div class="app-card">
-                <img class="app-thumb" src="${w.thumbnail_url || 'https://i.postimg.cc/X7kpKwx7/Picsart-26-09-07-22-20-41-182.jpg'}">
-                <div class="app-body">
-                    <h3>${w.name}</h3>
-                    <div class="desc">${w.description_bn || ''}</div>
-                    <a class="btn-sm btn-dl" href="${w.url}" target="_blank">🌐 ভিজিট</a>
-                </div>
-            </div>
-        `;
-    });
 }
 
 function playVideo(url) {
@@ -244,7 +320,7 @@ function closeVideo() {
     document.getElementById('videoContainer').innerHTML = '';
 }
 
-// ভিউ সুইচিং
+// ভিউ সুইচিং (প্রোফাইল / অ্যাপ স্টোর / ওয়েবসাইট)
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -254,17 +330,17 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     });
 });
 
-// ভাষা পরিবর্তন
+// ভাষা পরিবর্তন (বাং / EN)
 document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentLang = btn.dataset.lang;
-        document.getElementById('pfAbout').textContent = currentLang === 'bn' ? cachedProfile.about_bn : cachedProfile.about_en;
+        document.getElementById('pfAbout').textContent = currentLang === 'bn' ? cachedProfile.about_bn : (cachedProfile.about_en || cachedProfile.about_bn);
     });
 });
 
 initSite();
 </script>
 </body>
-                  </html>
+    </html>
