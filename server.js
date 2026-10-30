@@ -1,6 +1,11 @@
-// server.js
+// ============================================================
+// MahimHossainBD — Enterprise Full-Stack Unified Server
+// Handles: Routing, REST APIs, Firebase Auth, DB & File Storage
+// ============================================================
+
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
@@ -14,51 +19,74 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
-const JWT_SECRET = process.env.JWT_SECRET || 'MHB_SERVER_FALLBACK_SECRET_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'MHB_SERVER_FALLBACK_SECRET_KEY_2026';
 
-// PostgreSQL Pool
+// ------------------------------------------------------------
+// ১. ডাটাবেজ কানেকশন পুল (PostgreSQL)
+// ------------------------------------------------------------
 const db = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// Cloudinary Setup (যদি ক্লাউড ক্রেডেনশিয়াল থাকে)
+db.on('connect', () => {
+    console.log('[PostgreSQL] Database pool active and connected.');
+});
+
+db.on('error', (err) => {
+    console.warn('[PostgreSQL Warning] Database connection error:', err.message);
+});
+
+// ------------------------------------------------------------
+// ২. ক্লাউডিনারি ফাইল স্টোরেজ কনফিগারেশন (ফ্রি ক্লাউড)
+// ------------------------------------------------------------
 if (process.env.CLOUDINARY_CLOUD_NAME) {
     cloudinary.config({
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET
     });
+    console.log('[Storage] Cloudinary persistent storage configured.');
+} else {
+    console.log('[Storage] Cloudinary not set. Using local /uploads directory.');
 }
 
-// Multer Storage (ইন-মেমোরি বাফার)
+// Multer Storage (মেমোরি বাফার - সর্বোচ্চ 100MB পর্যন্ত APK ও ছবি)
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 100 * 1024 * 1024 } // 100MB পর্যন্ত
+    limits: { fileSize: 100 * 1024 * 1024 }
 });
 
-// Security & Parsing
+// ------------------------------------------------------------
+// ৩. সিকিউরিটি ও মিডলওয়্যার
+// ------------------------------------------------------------
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 
-// Rate Limiter
+// রেট লিমিটার (অতিরিক্ত আক্রমণ ও স্প্যাম রোধে)
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 400,
+    max: 450,
     message: { success: false, message: 'Too many requests. Please try again later.' }
 });
 app.use('/api/', apiLimiter);
 
-// স্ট্যাটিক ফ্রন্টএন্ড ফাইল ও আপলোডস
+// স্ট্যাটিক ফ্রন্টএন্ড এবং লোকাল আপলোডস ফোল্ডার
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const localUploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(localUploadsDir)) {
+    fs.mkdirSync(localUploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(localUploadsDir));
 
-// ==================== হেল্পার ফাংশনস ====================
+// ------------------------------------------------------------
+// ৪. হেল্পার ফাংশন ও অথেনটিকেশন গার্ড
+// ------------------------------------------------------------
 async function sendEmailOtp(toEmail, otpCode) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.warn(`[OTP Mailer] Simulated Code for ${toEmail}: ${otpCode}`);
+        console.warn(`[OTP Simulation] Simulated code for ${toEmail}: ${otpCode}`);
         return { success: true, simulated: true };
     }
     const transporter = nodemailer.createTransport({
@@ -73,7 +101,7 @@ async function sendEmailOtp(toEmail, otpCode) {
         subject: `Security OTP: ${otpCode}`,
         html: `
             <div style="font-family:Arial,sans-serif; background:#05070b; color:#fff; padding:20px; border-radius:10px; border:1px solid #1677ff;">
-                <h2 style="color:#1677ff;">MahimHossainBD Admin Login</h2>
+                <h2 style="color:#1677ff;">MahimHossainBD Admin Verification</h2>
                 <p>Your one-time login OTP is:</p>
                 <h1 style="color:#22c55e; letter-spacing:5px;">${otpCode}</h1>
                 <p style="color:#8d9aaa; font-size:12px;">This code will expire in 10 minutes.</p>
@@ -82,45 +110,48 @@ async function sendEmailOtp(toEmail, otpCode) {
     });
 }
 
-// অ্যাডমিন অথেনটিকেশন মিডলওয়্যার (Cookie অথবা Bearer Token)
-async function requireAdmin(req, res, next) {
+// অ্যাডমিন অথেনটিকেশন চেক মিডলওয়্যার
+function requireAdmin(req, res, next) {
     const token = req.cookies.mhb_session || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
     if (!token) {
         return res.status(401).json({ success: false, message: 'Unauthorized. Please login.' });
     }
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const check = await db.query('SELECT id, username, email FROM admins WHERE id = $1', [decoded.id]);
-        if (check.rows.length === 0) return res.status(403).json({ success: false, message: 'Invalid session.' });
-        req.admin = check.rows[0];
+        req.admin = decoded;
         next();
     } catch (e) {
         return res.status(401).json({ success: false, message: 'Session expired or invalid.' });
     }
 }
 
-// ==================== URL STRUCTURE & PAGE ROUTING ====================
-// ১. "/" — Main Website
+// ------------------------------------------------------------
+// ৫. সিঙ্গেল ডোমেইন পেজ রাউটিং (URL Structure)
+// ------------------------------------------------------------
+
+// ১. "/" — মূল ওয়েবসাইট পেজ
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ২. "/login" — Admin Login
+// ২. "/login" — অ্যাডমিন লগইন পেজ
 app.get('/login', (req, res) => {
     const token = req.cookies.mhb_session;
     if (token) {
         try {
             jwt.verify(token, JWT_SECRET);
-            return res.redirect('/admin');
+            return res.redirect('/admin'); // অলরেডি লগইন থাকলে অ্যাডমিনে নিয়ে যাবে
         } catch (e) {}
     }
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// ৩. "/admin" — Admin Panel
+// ৩. "/admin" — সুরক্ষিত অ্যাডমিন প্যানেল
 app.get('/admin', (req, res) => {
     const token = req.cookies.mhb_session;
-    if (!token) return res.redirect('/login');
+    if (!token) {
+        return res.redirect('/login');
+    }
     try {
         jwt.verify(token, JWT_SECRET);
         res.sendFile(path.join(__dirname, 'public', 'admin.html'));
@@ -129,8 +160,45 @@ app.get('/admin', (req, res) => {
     }
 });
 
-// ==================== BACKEND REST APIs ====================
-// API Root / Health
+// ------------------------------------------------------------
+// ৬. এমার্জেন্সি / অটো অ্যাডমিন সেটআপ রুট
+// ------------------------------------------------------------
+app.get('/setup-admin', async (req, res) => {
+    try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS admins (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(100) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL
+            );
+        `);
+
+        const hash = await bcrypt.hash('Mahim@123', 10);
+        await db.query(`
+            INSERT INTO admins (username, password_hash, email) 
+            VALUES ('MrMahimFire', $1, 'MahimHossainBD@gmail.com')
+            ON CONFLICT (username) DO UPDATE SET password_hash = $1;
+        `, [hash]);
+
+        res.send(`
+            <div style="font-family:sans-serif; text-align:center; padding-top:60px;">
+                <h1 style="color:#22c55e;">✅ অ্যাডমিন সফলভাবে ডাটাবেজে তৈরি ও কনফার্ম হয়েছে!</h1>
+                <p style="font-size:18px; color:#555;">ইউজারনেম: <b>MrMahimFire</b> | পাসওয়ার্ড: <b>Mahim@123</b></p>
+                <br>
+                <a href="/login" style="background:#1677ff; color:#fff; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">এখন লগইন করুন →</a>
+            </div>
+        `);
+    } catch (err) {
+        res.send(`<h1 style="color:red; text-align:center; padding-top:60px;">❌ ডাটাবেজ এরর: ${err.message}</h1>`);
+    }
+});
+
+// ------------------------------------------------------------
+// ৭. ব্যাকএন্ড REST API
+// ------------------------------------------------------------
+
+// হেলথ চেক API
 app.get('/api', async (req, res) => {
     let dbStatus = 'DISCONNECTED';
     try {
@@ -139,30 +207,53 @@ app.get('/api', async (req, res) => {
     } catch (e) {}
     res.json({
         success: true,
-        message: 'MahimHossainBD Server API Online',
+        status: 'ONLINE',
         database: dbStatus,
-        domain: req.headers.host
+        serverTime: new Date().toISOString()
     });
 });
 
-// ==================== 1. /api/auth ====================
-// লগইন ইনিশিয়েট
+// ==================== AUTH APIs ====================
+
+// ক) ফায়ারবেজ ফ্রি লগইন সেশন API
+app.post('/api/auth/firebase-login', (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ success: false, message: 'Email required' });
+    }
+
+    // ৭ দিনের সিকিউর অ্যাডমিন কুকি ইস্যু করা
+    const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
+    res.cookie('mhb_session', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({ success: true, message: 'Firebase Admin Session Created Successfully' });
+});
+
+// খ) স্ট্যান্ডার্ড ইউজারনেম ও পাসওয়ার্ড লগইন API (OTP সাপোর্টসহ)
 app.post('/api/auth/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const userRes = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
         if (userRes.rows.length === 0) {
-            return res.status(401).json({ success: false, message: 'Invalid username or password.' });
+            return res.status(401).json({ success: false, message: 'ভুল ইউজারনেম বা পাসওয়ার্ড!' });
         }
         const admin = userRes.rows[0];
         const match = await bcrypt.compare(password, admin.password_hash);
         if (!match) {
-            return res.status(401).json({ success: false, message: 'Invalid username or password.' });
+            return res.status(401).json({ success: false, message: 'ভুল ইউজারনেম বা পাসওয়ার্ড!' });
         }
 
-        // OTP সেটিংস চেক
-        const otpSetting = await db.query('SELECT value FROM settings WHERE key = $1', ['otp_enabled']);
-        const isOtpOn = otpSetting.rows.length > 0 && otpSetting.rows[0].value === 'true';
+        // OTP সেটিংস যাচাই
+        let isOtpOn = false;
+        try {
+            const otpSetting = await db.query('SELECT value FROM settings WHERE key = $1', ['otp_enabled']);
+            isOtpOn = otpSetting.rows.length > 0 && otpSetting.rows[0].value === 'true';
+        } catch (e) {}
 
         if (isOtpOn) {
             const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -181,8 +272,8 @@ app.post('/api/auth/login', async (req, res) => {
             });
         }
 
-        // সরাসরি টোকেন ইস্যু (OTP OFF থাকলে)
-        const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: '7d' });
+        // সরাসরি টোকেন ইস্যু
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
         res.cookie('mhb_session', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -196,7 +287,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// OTP ভেরিফাই
+// গ) OTP ভেরিফাই
 app.post('/api/auth/verify-otp', async (req, res) => {
     const { email, otp } = req.body;
     try {
@@ -209,13 +300,13 @@ app.post('/api/auth/verify-otp', async (req, res) => {
         }
         const isValid = await bcrypt.compare(otp, record.rows[0].code_hash);
         if (!isValid) {
-            return res.status(400).json({ success: false, message: 'Incorrect OTP code.' });
+            return res.status(400).json({ success: false, message: 'ভুল OTP কোড!' });
         }
 
         await db.query('UPDATE otp_codes SET is_used = TRUE WHERE id = $1', [record.rows[0].id]);
         const admin = (await db.query('SELECT id, username FROM admins WHERE email = $1', [email])).rows[0];
 
-        const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
         res.cookie('mhb_session', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -229,22 +320,41 @@ app.post('/api/auth/verify-otp', async (req, res) => {
     }
 });
 
-// লগআউট
+// ঘ) লগআউট
 app.post('/api/auth/logout', (req, res) => {
     res.clearCookie('mhb_session');
     res.json({ success: true, message: 'Logged out successfully.' });
 });
 
-// সেশন চেক
+// ঙ) সেশন ভ্যালিডেশন
 app.get('/api/auth/me', requireAdmin, (req, res) => {
     res.json({ success: true, admin: req.admin });
 });
 
-// ==================== 2. /api/profile ====================
+// ==================== PROFILE APIs ====================
 app.get('/api/profile', async (req, res) => {
     try {
-        const profile = (await db.query('SELECT * FROM profiles WHERE id = 1')).rows[0];
-        const links = (await db.query('SELECT * FROM social_links WHERE is_active = TRUE ORDER BY sort_order ASC')).rows;
+        let profile = {
+            name: 'MahimHossainBD',
+            tagline: 'Developer and create app',
+            about_bn: 'আমি হলো একজন Developer এবং তোমাদের App, ওয়েবসাইট বানানো শিখায়',
+            about_en: 'I am a Developer teaching you how to build modern apps and websites.',
+            email: 'MahimHossainBD@gmail.com',
+            logo_url: 'https://i.postimg.cc/X7kpKwx7/Picsart-26-09-07-22-20-41-182.jpg'
+        };
+        let links = [
+            { name: 'YouTube', username_handle: 'Channel link নেই', url: '', icon: 'youtube' },
+            { name: 'TikTok', username_handle: '@mahimhossainbd', url: 'https://tiktok.com/@mahimhossainbd', icon: 'tiktok' },
+            { name: 'Telegram', username_handle: '@MahimHossainBD', url: 'https://t.me/MahimHossainBD', icon: 'telegram' }
+        ];
+
+        try {
+            const pRes = await db.query('SELECT * FROM profiles WHERE id = 1');
+            if (pRes.rows.length > 0) profile = pRes.rows[0];
+            const lRes = await db.query('SELECT * FROM social_links WHERE is_active = TRUE ORDER BY sort_order ASC, id ASC');
+            if (lRes.rows.length > 0) links = lRes.rows;
+        } catch (dbErr) {}
+
         res.json({ success: true, profile, links });
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
@@ -279,10 +389,14 @@ app.put('/api/profile', requireAdmin, async (req, res) => {
     }
 });
 
-// ==================== 3. /api/apps ====================
+// ==================== APPS APIs ====================
 app.get('/api/apps', async (req, res) => {
     try {
-        const apps = (await db.query('SELECT * FROM applications WHERE is_visible = TRUE ORDER BY featured DESC, sort_order ASC, id DESC')).rows;
+        let apps = [];
+        try {
+            const result = await db.query('SELECT * FROM applications WHERE is_visible = TRUE ORDER BY featured DESC, sort_order ASC, id DESC');
+            apps = result.rows;
+        } catch (dbErr) {}
         res.json({ success: true, data: apps });
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
@@ -321,10 +435,14 @@ app.patch('/api/apps/:id/pin', requireAdmin, async (req, res) => {
     }
 });
 
-// ==================== 4. /api/websites ====================
+// ==================== WEBSITES APIs ====================
 app.get('/api/websites', async (req, res) => {
     try {
-        const websites = (await db.query('SELECT * FROM websites WHERE is_visible = TRUE ORDER BY sort_order ASC, id DESC')).rows;
+        let websites = [];
+        try {
+            const result = await db.query('SELECT * FROM websites WHERE is_visible = TRUE ORDER BY sort_order ASC, id DESC');
+            websites = result.rows;
+        } catch (dbErr) {}
         res.json({ success: true, data: websites });
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
@@ -353,13 +471,16 @@ app.delete('/api/websites/:id', requireAdmin, async (req, res) => {
     }
 });
 
-// ==================== 5. /api/settings ====================
+// ==================== SETTINGS & POLICIES APIs ====================
 app.get('/api/settings', async (req, res) => {
     try {
-        const rows = (await db.query('SELECT key, value FROM settings')).rows;
-        const settingsMap = {};
-        rows.forEach(r => { settingsMap[r.key] = r.value; });
-        const policies = (await db.query('SELECT * FROM policies')).rows;
+        let settingsMap = { site_title: 'MahimHossainBD', otp_enabled: 'false' };
+        let policies = [];
+        try {
+            const rows = (await db.query('SELECT key, value FROM settings')).rows;
+            rows.forEach(r => { settingsMap[r.key] = r.value; });
+            policies = (await db.query('SELECT * FROM policies')).rows;
+        } catch (dbErr) {}
         res.json({ success: true, settings: settingsMap, policies });
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
@@ -390,30 +511,33 @@ app.put('/api/settings', requireAdmin, async (req, res) => {
     }
 });
 
-// ==================== FILE & IMAGE UPLOAD API ====================
+// ==================== DUAL FILE & APK UPLOAD API ====================
 app.post('/api/upload', requireAdmin, upload.single('file'), async (req, res) => {
     try {
-        if (!req.file) return res.status(400).json({ success: false, message: 'No file received.' });
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No file received.' });
+        }
 
+        // ক্লাউডিনারি ক্রেডেনশিয়াল থাকলে ক্লাউডে আপলোড হবে (১০০% ফ্রি)
         if (process.env.CLOUDINARY_CLOUD_NAME) {
             const streamUpload = (buffer) => {
                 return new Promise((resolve, reject) => {
-                    const stream = cloudinary.uploader.upload_stream({ resource_type: 'auto', folder: 'mahimhossainbd' }, (err, result) => {
-                        if (result) resolve(result);
-                        else reject(err);
-                    });
+                    const stream = cloudinary.uploader.upload_stream(
+                        { resource_type: 'auto', folder: 'mahimhossainbd' },
+                        (err, result) => {
+                            if (result) resolve(result);
+                            else reject(err);
+                        }
+                    );
                     stream.end(buffer);
                 });
             };
             const result = await streamUpload(req.file.buffer);
             return res.json({ success: true, url: result.secure_url });
         } else {
-            // লোকাল ডিরেক্টরি ব্যাকআপ
-            const fs = require('fs');
-            const uploadDir = path.join(__dirname, 'uploads');
-            if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+            // ক্লাউডিনারি না থাকলে লোকাল সার্ভারে সেভ হবে
             const fname = `${Date.now()}-${req.file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-            fs.writeFileSync(path.join(uploadDir, fname), req.file.buffer);
+            fs.writeFileSync(path.join(localUploadsDir, fname), req.file.buffer);
             return res.json({ success: true, url: `/uploads/${fname}` });
         }
     } catch (e) {
@@ -421,7 +545,14 @@ app.post('/api/upload', requireAdmin, upload.single('file'), async (req, res) =>
     }
 });
 
-// সার্ভার স্টার্ট
+// ------------------------------------------------------------
+// ৮. সার্ভার স্টার্ট
+// ------------------------------------------------------------
 app.listen(PORT, () => {
-    console.log(`[MahimHossainBD Production] Unified Server running on port ${PORT}`);
+    console.log(`====================================================`);
+    console.log(`[MahimHossainBD Production Server Live]`);
+    console.log(`Port: ${PORT}`);
+    console.log(`Mode: ${process.env.NODE_ENV || 'production'}`);
+    console.log(`Live URL: http://localhost:${PORT}`);
+    console.log(`====================================================`);
 });
