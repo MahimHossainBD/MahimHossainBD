@@ -1,31 +1,38 @@
+// database/migrate.js
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcrypt');
-const db = require('../backend/config/db');
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 async function runMigration() {
-    console.log('[Migration] Beginning database schema provisioning...');
+    console.log('[Database] Checking schema & tables...');
     try {
-        const sql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf8');
-        await db.query(sql);
-        console.log('[Migration] Database tables and indexes verified.');
+        const sql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+        await pool.query(sql);
+        console.log('[Database] Tables and constraints synchronized.');
 
-        // Seed Default Super Admin Account if not present
-        const adminCheck = await db.query('SELECT * FROM admins WHERE username = $1', ['MrMahimFire']);
-        if (adminCheck.rows.length === 0) {
-            const defaultHash = await bcrypt.hash('Mahim@123', 10);
-            await db.query(
+        // ডিফল্ট অ্যাডমিন অ্যাকাউন্ট যাচাই ও তৈরি (MrMahimFire / Mahim@123)
+        const check = await pool.query('SELECT * FROM admins WHERE username = $1', ['MrMahimFire']);
+        if (check.rows.length === 0) {
+            const hash = await bcrypt.hash('Mahim@123', 10);
+            await pool.query(
                 'INSERT INTO admins (username, password_hash, email) VALUES ($1, $2, $3)',
-                ['MrMahimFire', defaultHash, 'MahimHossainBD@gmail.com']
+                ['MrMahimFire', hash, 'MahimHossainBD@gmail.com']
             );
-            console.log('[Migration] Default administrative credentials created.');
+            console.log('[Database] Default admin user created: MrMahimFire');
         } else {
-            console.log('[Migration] Administrative record already provisioned.');
+            console.log('[Database] Admin user exists.');
         }
 
         process.exit(0);
     } catch (err) {
-        console.error('[Migration Error]:', err.message);
+        console.error('[Database Migration Error]:', err.message);
         process.exit(1);
     }
 }
