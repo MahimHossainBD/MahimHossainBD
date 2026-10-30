@@ -1,0 +1,26 @@
+# Application Environment
+NODE_ENV=production
+PORT=10000
+
+# PostgreSQL Connection String (Neon, Supabase, or Render PostgreSQL)
+DATABASE_URL=postgresql://username:password@ep-sample-pool.region.aws.neon.tech/mahimdb?sslmode=require
+
+# Security Tokens
+JWT_SECRET=super_secret_jwt_key_replace_with_min_32_characters
+
+# Cloudinary Storage Credentials (For APK, ZIP & Image Uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Optional Firebase Admin SDK Credentials
+FIREBASE_PROJECT_ID=your-firebase-project-id
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...\n-----END PRIVATE KEY-----\n"
+
+# Optional Email OTP Service (Gmail / SendGrid / Custom SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=MahimHossainBD@gmail.com
+SMTP_PASS=your_gmail_app_password
