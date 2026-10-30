@@ -1,564 +1,577 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MahimHossainBD</title>
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MahimHossainBD — Official Website & Store</title>
+    
+    <!-- Meta Tags for SEO & Social Sharing -->
+    <meta name="description" content="Official website of MahimHossainBD. Developer and app creator. Download apps, visit projects, and connect.">
+    <meta name="author" content="MahimHossainBD">
+    <meta property="og:title" content="MahimHossainBD — Developer and App Creator">
+    <meta property="og:description" content="Explore and download applications, projects, and websites created by MahimHossainBD.">
+    <meta property="og:url" content="https://mahimhossainbd.onrender.com">
 
-:root {
-    --blue:#1677ff;
-    --blue-2:#0d63dc;
-    --dark:#05070b;
-    --dark-card:#0d1118;
-    --dark-2:#070a10;
-    --white:#ffffff;
-    --text:#dce5f2;
-    --muted:#8d9aaa;
-    --border:rgba(255,255,255,0.09);
-    --border-strong:rgba(255,255,255,0.16);
-    --green:#22c55e;
-    --red:#ef4444;
-    --purple:#8b5cf6;
-    --orange:#f59e0b;
-    --grad-blue:linear-gradient(135deg,#1677ff,#0d63dc);
-    --grad-purple:linear-gradient(135deg,#8b5cf6,#6d28d9);
-    --grad-orange:linear-gradient(135deg,#f59e0b,#d97706);
-    --grad-green:linear-gradient(135deg,#22c55e,#16a34a);
-}
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background:
-        radial-gradient(circle at 50% 0%, rgba(22,119,255,0.20), transparent 35%),
-        var(--dark);
-    color: var(--white);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
+        :root {
+            --blue: #1677ff;
+            --blue-2: #0d63dc;
+            --dark: #05070b;
+            --dark-card: #0d1118;
+            --dark-2: #070a10;
+            --white: #ffffff;
+            --text: #dce5f2;
+            --muted: #8d9aaa;
+            --border: rgba(255,255,255,0.09);
+            --border-strong: rgba(255,255,255,0.16);
+            --green: #22c55e;
+            --red: #ef4444;
+            --purple: #8b5cf6;
+            --orange: #f59e0b;
+            --grad-blue: linear-gradient(135deg, #1677ff, #0d63dc);
+            --grad-purple: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            --grad-orange: linear-gradient(135deg, #f59e0b, #d97706);
+            --grad-green: linear-gradient(135deg, #22c55e, #16a34a);
+        }
 
-a { text-decoration:none; color:inherit; }
-button { font-family:inherit; cursor:pointer; border:none; }
-.container { width:min(1100px, 92%); margin:auto; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(22,119,255,0.20), transparent 35%),
+                var(--dark);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-/* Connection Status Badge */
-.connection-bar {
-    background: rgba(0,0,0,0.6);
-    text-align: center;
-    font-size: 11px;
-    padding: 4px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-}
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--orange);
-}
-.status-dot.online { background: var(--green); }
-.status-dot.offline { background: var(--red); }
+        a { text-decoration:none; color:inherit; }
+        button { font-family:inherit; cursor:pointer; border:none; }
+        .container { width:min(1100px, 92%); margin:auto; }
 
-/* TOP NAV */
-.topnav-wrap {
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:rgba(5,7,11,0.85);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--border);
-    padding:12px 0;
-}
-.topnav-inner { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.topnav { display:flex; justify-content:center; align-items:center; gap:8px; flex:1; overflow-x:auto; scrollbar-width:none; padding:0 4px; }
-.topnav::-webkit-scrollbar { display:none; }
+        /* LIVE STATUS BAR */
+        .connection-bar {
+            background: rgba(5, 7, 11, 0.95);
+            text-align: center;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--orange);
+            display: inline-block;
+        }
+        .status-dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .status-dot.offline { background: var(--red); box-shadow: 0 0 8px var(--red); }
 
-.nav-btn {
-    padding:11px 20px;
-    border-radius:12px;
-    background:transparent;
-    border:1px solid transparent;
-    color:var(--muted);
-    font-size:14px;
-    font-weight:700;
-    transition:.25s;
-    display:flex;
-    align-items:center;
-    gap:7px;
-    white-space:nowrap;
-    flex-shrink:0;
-}
-.nav-btn:hover { background:rgba(255,255,255,0.06); color:var(--text); }
-.nav-btn.active { background:var(--grad-blue); color:#fff; box-shadow:0 6px 18px rgba(22,119,255,0.4); }
-.nav-btn .nav-ico { font-size:16px; line-height:1; }
+        /* TOP NAV */
+        .topnav-wrap {
+            position:sticky;
+            top:0;
+            z-index:100;
+            background:rgba(5,7,11,0.85);
+            backdrop-filter:blur(14px);
+            border-bottom:1px solid var(--border);
+            padding:12px 0;
+        }
+        .topnav-inner { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+        .topnav { display:flex; justify-content:center; align-items:center; gap:8px; flex:1; overflow-x:auto; scrollbar-width:none; padding:0 4px; }
+        .topnav::-webkit-scrollbar { display:none; }
 
-.lang-switch {
-    display:flex;
-    align-items:center;
-    background:rgba(255,255,255,0.05);
-    border:1px solid var(--border);
-    border-radius:11px;
-    padding:3px;
-    flex-shrink:0;
-}
-.lang-btn {
-    padding:7px 12px;
-    border-radius:8px;
-    background:transparent;
-    color:var(--muted);
-    font-size:12px;
-    font-weight:800;
-    display:flex;
-    align-items:center;
-    gap:5px;
-    white-space:nowrap;
-}
-.lang-btn.active { background:var(--grad-blue); color:#fff; box-shadow:0 4px 12px rgba(22,119,255,0.35); }
+        .nav-btn {
+            padding:11px 20px;
+            border-radius:12px;
+            background:transparent;
+            border:1px solid transparent;
+            color:var(--muted);
+            font-size:14px;
+            font-weight:700;
+            transition:.25s;
+            display:flex;
+            align-items:center;
+            gap:7px;
+            white-space:nowrap;
+            flex-shrink:0;
+        }
+        .nav-btn:hover { background:rgba(255,255,255,0.06); color:var(--text); }
+        .nav-btn.active { background:var(--grad-blue); color:#fff; box-shadow:0 6px 18px rgba(22,119,255,0.4); }
+        .nav-btn .nav-ico { font-size:16px; line-height:1; }
 
-/* HEADER */
-header { padding:34px 0 15px; text-align:center; }
-.logo {
-    width:110px; height:110px;
-    object-fit:cover;
-    border-radius:50%;
-    border:3px solid var(--blue);
-    box-shadow:0 0 40px rgba(22,119,255,0.4);
-    background:#111;
-    animation:logoPulse 4s ease-in-out infinite;
-}
-@keyframes logoPulse {
-    0%,100% { box-shadow:0 0 40px rgba(22,119,255,0.4); }
-    50% { box-shadow:0 0 55px rgba(22,119,255,0.7); }
-}
-.name {
-    margin-top:18px;
-    font-size:clamp(28px,6vw,48px);
-    font-weight:800;
-    letter-spacing:-1px;
-    background:linear-gradient(135deg,#fff,#a9c9ff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-.tagline { margin-top:10px; color:var(--blue); font-size:clamp(15px,3vw,20px); font-weight:600; }
-.about { max-width:700px; margin:18px auto 0; color:var(--muted); line-height:1.8; font-size:16px; white-space:pre-line; }
+        .lang-switch {
+            display:flex;
+            align-items:center;
+            background:rgba(255,255,255,0.05);
+            border:1px solid var(--border);
+            border-radius:11px;
+            padding:3px;
+            flex-shrink:0;
+        }
+        .lang-btn {
+            padding:7px 12px;
+            border-radius:8px;
+            background:transparent;
+            color:var(--muted);
+            font-size:12px;
+            font-weight:800;
+            display:flex;
+            align-items:center;
+            gap:5px;
+            white-space:nowrap;
+        }
+        .lang-btn.active { background:var(--grad-blue); color:#fff; box-shadow:0 4px 12px rgba(22,119,255,0.35); }
 
-.section { padding:35px 0; }
-.section-title { text-align:center; font-size:25px; margin-bottom:22px; }
-.section-title span { color:var(--blue); }
+        /* HEADER */
+        header { padding:34px 0 15px; text-align:center; }
+        .logo {
+            width:110px; height:110px;
+            object-fit:cover;
+            border-radius:50%;
+            border:3px solid var(--blue);
+            box-shadow:0 0 40px rgba(22,119,255,0.4);
+            background:#111;
+            animation:logoPulse 4s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%,100% { box-shadow:0 0 40px rgba(22,119,255,0.4); }
+            50% { box-shadow:0 0 55px rgba(22,119,255,0.7); }
+        }
+        .name {
+            margin-top:18px;
+            font-size:clamp(28px,6vw,48px);
+            font-weight:800;
+            letter-spacing:-1px;
+            background:linear-gradient(135deg,#fff,#a9c9ff);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .tagline { margin-top:10px; color:var(--blue); font-size:clamp(15px,3vw,20px); font-weight:600; }
+        .about { max-width:700px; margin:18px auto 0; color:var(--muted); line-height:1.8; font-size:16px; white-space:pre-line; }
 
-/* LINKS */
-.links { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
-.link-card {
-    background:linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:24px 20px;
-    text-align:center;
-    transition:.3s ease;
-    backdrop-filter:blur(12px);
-}
-.link-card:hover { transform:translateY(-6px); border-color:rgba(22,119,255,0.65); box-shadow:0 15px 40px rgba(0,0,0,0.35); }
-.icon {
-    width:58px; height:58px;
-    margin:0 auto 15px;
-    border-radius:16px;
-    background:rgba(22,119,255,0.12);
-    border:1px solid rgba(22,119,255,0.25);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--blue);
-}
-.icon svg { width:29px; height:29px; fill:currentColor; }
-.link-card h3 { font-size:19px; margin-bottom:8px; }
-.link-card p { color:var(--muted); font-size:13px; margin-bottom:17px; }
-.visit-btn {
-    display:inline-block;
-    padding:10px 18px;
-    border-radius:10px;
-    background:var(--grad-blue);
-    color:white;
-    font-size:14px;
-    font-weight:700;
-}
-.disabled { opacity:.55; cursor:not-allowed; background:#333 !important; }
+        .section { padding:35px 0; }
+        .section-title { text-align:center; font-size:25px; margin-bottom:22px; }
+        .section-title span { color:var(--blue); }
 
-/* SEARCH & CHIPS */
-.search-wrap { max-width:520px; margin:0 auto 18px; position:relative; }
-.search-wrap input {
-    width:100%;
-    padding:12px 18px 12px 44px;
-    border-radius:14px;
-    background:var(--dark-2);
-    border:1px solid var(--border);
-    color:#fff;
-    font-size:14px;
-    outline:none;
-}
-.search-wrap::before { content:"🔍"; position:absolute; left:15px; top:50%; transform:translateY(-50%); font-size:15px; opacity:.6; }
+        /* LINKS */
+        .links { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
+        .link-card {
+            background:linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+            border:1px solid var(--border);
+            border-radius:20px;
+            padding:24px 20px;
+            text-align:center;
+            transition:.3s ease;
+            backdrop-filter:blur(12px);
+        }
+        .link-card:hover { transform:translateY(-6px); border-color:rgba(22,119,255,0.65); box-shadow:0 15px 40px rgba(0,0,0,0.35); }
+        .icon {
+            width:58px; height:58px;
+            margin:0 auto 15px;
+            border-radius:16px;
+            background:rgba(22,119,255,0.12);
+            border:1px solid rgba(22,119,255,0.25);
+            display:flex; align-items:center; justify-content:center;
+            color:var(--blue);
+        }
+        .icon svg { width:29px; height:29px; fill:currentColor; }
+        .link-card h3 { font-size:19px; margin-bottom:8px; }
+        .link-card p { color:var(--muted); font-size:13px; margin-bottom:17px; }
+        .visit-btn {
+            display:inline-block;
+            padding:10px 18px;
+            border-radius:10px;
+            background:var(--grad-blue);
+            color:white;
+            font-size:14px;
+            font-weight:700;
+            transition: .25s;
+        }
+        .visit-btn:hover { transform: scale(1.03); box-shadow: 0 4px 15px rgba(22,119,255,0.4); }
+        .disabled { opacity:.55; cursor:not-allowed; background:#333 !important; }
 
-.chips { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
-.chip {
-    padding:7px 15px;
-    border-radius:20px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid var(--border);
-    color:var(--muted);
-    font-size:12px;
-    font-weight:700;
-}
-.chip.active { background:rgba(22,119,255,0.2); color:#fff; border-color:rgba(22,119,255,0.6); }
+        /* SEARCH & CHIPS */
+        .search-wrap { max-width:520px; margin:0 auto 18px; position:relative; }
+        .search-wrap input {
+            width:100%;
+            padding:12px 18px 12px 44px;
+            border-radius:14px;
+            background:var(--dark-2);
+            border:1px solid var(--border);
+            color:#fff;
+            font-size:14px;
+            outline:none;
+        }
+        .search-wrap::before { content:"🔍"; position:absolute; left:15px; top:50%; transform:translateY(-50%); font-size:15px; opacity:.6; }
 
-/* APPS GRID */
-.apps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:18px; }
-.app-card {
-    background:linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
-    border:1px solid var(--border);
-    border-radius:20px;
-    overflow:hidden;
-    transition:.3s ease;
-    display:flex;
-    flex-direction:column;
-    position:relative;
-}
-.app-card:hover { transform:translateY(-5px); border-color:rgba(22,119,255,0.65); box-shadow:0 15px 40px rgba(0,0,0,0.4); }
-.pin-badge {
-    position:absolute; top:10px; right:10px;
-    background:var(--grad-orange); color:#fff;
-    font-size:10px; font-weight:800; padding:4px 10px;
-    border-radius:20px; z-index:2;
-}
-.app-thumb { width:100%; height:150px; object-fit:cover; background:#111; border-bottom:1px solid var(--border); }
-.app-body { padding:16px 18px 18px; flex:1; display:flex; flex-direction:column; }
-.app-body h3 { font-size:18px; margin-bottom:6px; }
-.meta-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; font-size:11px; }
-.tag-pill { padding:3px 9px; border-radius:20px; background:rgba(22,119,255,0.15); color:#7ab8ff; font-weight:700; }
-.tag-pill.gray { background:rgba(255,255,255,0.07); color:var(--muted); }
-.desc { color:var(--muted); font-size:13px; line-height:1.6; margin-bottom:14px; flex:1; }
-.app-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        .chips { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
+        .chip {
+            padding:7px 15px;
+            border-radius:20px;
+            background:rgba(255,255,255,0.05);
+            border:1px solid var(--border);
+            color:var(--muted);
+            font-size:12px;
+            font-weight:700;
+        }
+        .chip.active { background:rgba(22,119,255,0.2); color:#fff; border-color:rgba(22,119,255,0.6); }
 
-.btn-sm { padding:8px 14px; border-radius:9px; font-size:13px; font-weight:700; display:inline-flex; align-items:center; gap:5px; }
-.btn-dl { background:var(--grad-green); color:#fff; }
-.btn-vid { background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); }
-.btn-share { background:rgba(22,119,255,0.15); color:#7ab8ff; border:1px solid rgba(22,119,255,0.4); }
-.btn-info { background:rgba(255,255,255,0.07); color:var(--text); border:1px solid var(--border); }
+        /* APPS GRID */
+        .apps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:18px; }
+        .app-card {
+            background:linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+            border:1px solid var(--border);
+            border-radius:20px;
+            overflow:hidden;
+            transition:.3s ease;
+            display:flex;
+            flex-direction:column;
+            position:relative;
+        }
+        .app-card:hover { transform:translateY(-5px); border-color:rgba(22,119,255,0.65); box-shadow:0 15px 40px rgba(0,0,0,0.4); }
+        .pin-badge {
+            position:absolute; top:10px; right:10px;
+            background:var(--grad-orange); color:#fff;
+            font-size:10px; font-weight:800; padding:4px 10px;
+            border-radius:20px; z-index:2;
+        }
+        .app-thumb { width:100%; height:150px; object-fit:cover; background:#111; border-bottom:1px solid var(--border); }
+        .app-body { padding:16px 18px 18px; flex:1; display:flex; flex-direction:column; }
+        .app-body h3 { font-size:18px; margin-bottom:6px; }
+        .meta-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; font-size:11px; }
+        .tag-pill { padding:3px 9px; border-radius:20px; background:rgba(22,119,255,0.15); color:#7ab8ff; font-weight:700; }
+        .tag-pill.gray { background:rgba(255,255,255,0.07); color:var(--muted); }
+        .desc { color:var(--muted); font-size:13px; line-height:1.6; margin-bottom:14px; flex:1; }
+        .app-actions { display:flex; gap:8px; flex-wrap:wrap; }
 
-.contact { margin:10px auto 45px; max-width:650px; background:var(--dark-card); border:1px solid var(--border); border-radius:20px; padding:24px; text-align:center; }
-.email { color:var(--blue); word-break:break-word; font-size:15px; }
+        .btn-sm { padding:8px 14px; border-radius:9px; font-size:13px; font-weight:700; display:inline-flex; align-items:center; gap:5px; }
+        .btn-dl { background:var(--grad-green); color:#fff; }
+        .btn-vid { background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); }
+        .btn-share { background:rgba(22,119,255,0.15); color:#7ab8ff; border:1px solid rgba(22,119,255,0.4); }
 
-footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; color:var(--muted); font-size:13px; }
-.footer-admin { display:inline-block; margin-top:8px; color:#1a2330; font-size:11px; cursor:default; user-select:none; }
+        .contact { margin:10px auto 45px; max-width:650px; background:var(--dark-card); border:1px solid var(--border); border-radius:20px; padding:24px; text-align:center; }
+        .email { color:var(--blue); word-break:break-word; font-size:15px; }
 
-/* MODALS */
-.modal-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,0.78);
-    backdrop-filter:blur(6px); display:none; align-items:center;
-    justify-content:center; padding:20px; z-index:1000;
-}
-.modal-overlay.open { display:flex; }
-.modal {
-    background:var(--dark-card); border:1px solid var(--border);
-    border-radius:20px; padding:26px 24px; width:min(520px,100%);
-    max-height:90vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,0.6);
-}
-.admin-modal { width:min(900px,100%) !important; padding:0 !important; overflow:hidden; display:flex; flex-direction:column; }
-.admin-header {
-    background:linear-gradient(135deg, rgba(22,119,255,0.18), rgba(139,92,246,0.12));
-    padding:18px 24px; border-bottom:1px solid var(--border);
-    display:flex; justify-content:space-between; align-items:center;
-}
-.admin-tabs { display:flex; gap:6px; padding:14px 18px 0; border-bottom:1px solid var(--border); overflow-x:auto; }
-.tab { padding:10px 16px; background:transparent; border:none; color:var(--muted); font-weight:700; cursor:pointer; }
-.tab.active { color:#fff; border-bottom:2px solid var(--blue); }
-.admin-body { padding:20px 24px; overflow-y:auto; flex:1; }
+        footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; color:var(--muted); font-size:13px; }
+        .footer-admin { display:inline-block; margin-top:8px; color:#1a2330; font-size:11px; cursor:default; user-select:none; }
+        .footer-admin:hover { color:#3a4b66; cursor:pointer; }
 
-.field { margin-bottom:14px; }
-.field label { display:block; font-size:12px; color:var(--text); font-weight:700; margin-bottom:7px; text-transform:uppercase; }
-.field input, .field textarea, .field select {
-    width:100%; padding:11px 14px; border-radius:10px; background:var(--dark-2);
-    border:1px solid var(--border); color:#fff; font-size:14px; outline:none;
-}
-.dual-input-wrap {
-    display:flex; gap:10px; align-items:center; background:rgba(255,255,255,0.02);
-    padding:10px; border-radius:10px; border:1px solid var(--border);
-}
-.dual-input-wrap input[type="text"] { flex:1; }
-.dual-input-wrap input[type="file"] { max-width:140px; font-size:11px; }
+        /* MODALS */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.78);
+            backdrop-filter:blur(6px); display:none; align-items:center;
+            justify-content:center; padding:20px; z-index:1000;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal {
+            background:var(--dark-card); border:1px solid var(--border);
+            border-radius:20px; padding:26px 24px; width:min(520px,100%);
+            max-height:90vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,0.6);
+        }
+        .admin-modal { width:min(900px,100%) !important; padding:0 !important; overflow:hidden; display:flex; flex-direction:column; }
+        .admin-header {
+            background:linear-gradient(135deg, rgba(22,119,255,0.18), rgba(139,92,246,0.12));
+            padding:18px 24px; border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .admin-tabs { display:flex; gap:6px; padding:14px 18px 0; border-bottom:1px solid var(--border); overflow-x:auto; }
+        .tab { padding:10px 16px; background:transparent; border:none; color:var(--muted); font-weight:700; cursor:pointer; }
+        .tab.active { color:#fff; border-bottom:2px solid var(--blue); }
+        .admin-body { padding:20px 24px; overflow-y:auto; flex:1; }
 
-.btn-primary { width:100%; padding:12px; border-radius:10px; background:var(--grad-blue); color:#fff; font-weight:bold; }
-.btn-ghost { width:100%; padding:10px; border-radius:10px; background:transparent; border:1px solid var(--border); color:var(--muted); margin-top:8px; }
+        .field { margin-bottom:14px; }
+        .field label { display:block; font-size:12px; color:var(--text); font-weight:700; margin-bottom:7px; text-transform:uppercase; }
+        .field input, .field textarea, .field select {
+            width:100%; padding:11px 14px; border-radius:10px; background:var(--dark-2);
+            border:1px solid var(--border); color:#fff; font-size:14px; outline:none;
+        }
+        .dual-input-wrap {
+            display:flex; gap:10px; align-items:center; background:rgba(255,255,255,0.02);
+            padding:10px; border-radius:10px; border:1px solid var(--border);
+        }
+        .dual-input-wrap input[type="text"] { flex:1; }
+        .dual-input-wrap input[type="file"] { max-width:140px; font-size:11px; }
 
-.toast {
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(120px);
-    background:#0d1118; border:1px solid var(--border-strong); color:#fff;
-    padding:13px 24px; border-radius:12px; font-size:14px; transition:.35s; z-index:2000;
-}
-.toast.show { transform:translateX(-50%) translateY(0); }
+        .btn-primary { width:100%; padding:12px; border-radius:10px; background:var(--grad-blue); color:#fff; font-weight:bold; }
+        .btn-ghost { width:100%; padding:10px; border-radius:10px; background:transparent; border:1px solid var(--border); color:var(--muted); margin-top:8px; }
 
-/* Video & Detail modal styling preserved */
-.video-box, .detail-box { background:#0d1118; border:1px solid var(--border); border-radius:16px; padding:20px; width:min(800px, 100%); }
-.video-box video, .video-box iframe { width:100%; aspect-ratio:16/9; border-radius:10px; border:none; }
-</style>
+        .toast {
+            position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(120px);
+            background:#0d1118; border:1px solid var(--border-strong); color:#fff;
+            padding:13px 24px; border-radius:12px; font-size:14px; transition:.35s; z-index:2000;
+        }
+        .toast.show { transform:translateX(-50%) translateY(0); }
+
+        .video-box, .detail-box { background:#0d1118; border:1px solid var(--border); border-radius:16px; padding:20px; width:min(800px, 100%); }
+        .video-box video, .video-box iframe { width:100%; aspect-ratio:16/9; border-radius:10px; border:none; }
+    </style>
 </head>
 <body>
 
-<div class="connection-bar">
-    <div class="status-dot" id="statusDot"></div>
-    <span id="statusText">Checking server link...</span>
-</div>
-
-<!-- ================= TOP NAV ================= -->
-<div class="topnav-wrap">
-    <div class="container">
-        <div class="topnav-inner">
-            <nav class="topnav" id="mainNav">
-                <button class="nav-btn active" data-view="profile">
-                    <span class="nav-ico">👤</span> <span data-i18n="nav.profile">প্রোফাইল</span>
-                </button>
-                <button class="nav-btn" data-view="store">
-                    <span class="nav-ico">📦</span> <span data-i18n="nav.store">অ্যাপ স্টোর</span>
-                </button>
-                <button class="nav-btn" data-view="web">
-                    <span class="nav-ico">🌐</span> <span data-i18n="nav.web">ওয়েবসাইট</span>
-                </button>
-            </nav>
-
-            <div class="lang-switch">
-                <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
-                <button class="lang-btn active" data-lang="bn">🇧🇩 বাং</button>
-            </div>
-        </div>
+    <!-- LIVE SERVER CONNECTION STATUS -->
+    <div class="connection-bar">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Connecting to server...</span>
     </div>
-</div>
 
-<!-- ================= PROFILE VIEW ================= -->
-<div id="view-profile">
-    <header>
+    <!-- ================= TOP NAV ================= -->
+    <div class="topnav-wrap">
         <div class="container">
-            <img class="logo" id="pfLogo" src="" alt="Logo">
-            <h1 class="name" id="pfName">MahimHossainBD</h1>
-            <div class="tagline" id="pfTagline">Developer and create app</div>
-            <p class="about" id="pfAbout"></p>
-        </div>
-    </header>
+            <div class="topnav-inner">
+                <nav class="topnav" id="mainNav">
+                    <button class="nav-btn active" data-view="profile">
+                        <span class="nav-ico">👤</span> <span data-i18n="nav.profile">প্রোফাইল</span>
+                    </button>
+                    <button class="nav-btn" data-view="store">
+                        <span class="nav-ico">📦</span> <span data-i18n="nav.store">অ্যাপ স্টোর</span>
+                    </button>
+                    <button class="nav-btn" data-view="web">
+                        <span class="nav-ico">🌐</span> <span data-i18n="nav.web">ওয়েবসাইট</span>
+                    </button>
+                </nav>
 
-    <main class="container">
-        <section class="section">
-            <h2 class="section-title" data-i18n-html="profile.linksTitle">Online <span>Link</span></h2>
-            <div class="links" id="linksGrid"></div>
-        </section>
-
-        <section class="contact">
-            <h2 class="contact-title" data-i18n="profile.contact">Contact</h2>
-            <a class="email" id="pfEmail" href="#">MahimHossainBD@gmail.com</a>
-        </section>
-    </main>
-</div>
-
-<!-- ================= APP STORE VIEW ================= -->
-<div id="view-store" style="display:none;">
-    <main class="container">
-        <section class="section">
-            <h2 class="section-title" data-i18n-html="store.title">📦 অ্যাপ <span>স্টোর</span></h2>
-            <div class="search-wrap">
-                <input type="text" id="appSearch" placeholder="অ্যাপের নাম দিয়ে খুঁজুন...">
-            </div>
-            <div class="chips" id="appChips"></div>
-            <div id="appsGrid" class="apps-grid"></div>
-            <div id="appsEmpty" class="empty" style="display:none; text-align:center; padding:40px; color:var(--muted);">কোনো অ্যাপ পাওয়া যায়নি।</div>
-        </section>
-    </main>
-</div>
-
-<!-- ================= WEBSITE STORE VIEW ================= -->
-<div id="view-web" style="display:none;">
-    <main class="container">
-        <section class="section">
-            <h2 class="section-title" data-i18n-html="web.title">🌐 ওয়েবসাইট <span>স্টোর</span></h2>
-            <div id="webGrid" class="apps-grid"></div>
-            <div id="webEmpty" class="empty" style="display:none; text-align:center; padding:40px; color:var(--muted);">কোনো ওয়েবসাইট যোগ করা হয়নি।</div>
-        </section>
-    </main>
-</div>
-
-<!-- ================= ADMIN LOGIN MODAL ================= -->
-<div class="modal-overlay" id="loginModal">
-    <div class="modal">
-        <h2 style="text-align:center; margin-bottom:6px;">🔐 অ্যাডমিন লগইন</h2>
-        <p style="text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px;">MahimHossainBD Control Center</p>
-
-        <div id="loginCredentialsForm">
-            <div class="field">
-                <label>ইউজারনেম</label>
-                <input type="text" id="loginUser" placeholder="Username">
-            </div>
-            <div class="field">
-                <label>পাসওয়ার্ড</label>
-                <input type="password" id="loginPass" placeholder="Password">
-            </div>
-            <button class="btn-primary" id="loginSubmitBtn">লগইন করুন</button>
-        </div>
-
-        <div id="loginOtpForm" style="display:none;">
-            <div class="field">
-                <label>Security 6-Digit OTP</label>
-                <input type="text" id="loginOtpInput" placeholder="123456" maxlength="6">
-            </div>
-            <button class="btn-primary" id="loginOtpSubmitBtn">Verify & Enter</button>
-        </div>
-
-        <button class="btn-ghost" id="loginClose">বাতিল</button>
-        <div id="loginError" style="color:var(--red); font-size:13px; text-align:center; margin-top:10px; display:none;"></div>
-    </div>
-</div>
-
-<!-- ================= COMPLETE ADMIN PANEL MODAL ================= -->
-<div class="modal-overlay" id="adminModal">
-    <div class="modal admin-modal">
-        <div class="admin-header">
-            <h3>⚙️ MahimHossainBD Production Control</h3>
-            <button id="adminLogoutBtn" style="background:var(--red); color:#fff; padding:6px 14px; border-radius:8px;">🚪 Logout</button>
-        </div>
-
-        <div class="admin-tabs">
-            <button class="tab active" data-tab="profile">👤 Profile</button>
-            <button class="tab" data-tab="apps">📦 Apps</button>
-            <button class="tab" data-tab="websites">🌐 Websites</button>
-            <button class="tab" data-tab="server">🔌 Server Connection</button>
-        </div>
-
-        <div class="admin-body">
-            <!-- PROFILE TAB -->
-            <div id="tab-profile" class="tab-content">
-                <div class="field">
-                    <label>Profile Picture / Logo (Dual Mode: URL or Upload)</label>
-                    <div class="dual-input-wrap">
-                        <input type="text" id="admPfLogoUrl" placeholder="Direct Image URL (https://...)">
-                        <input type="file" id="admPfLogoFile" accept="image/*">
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Developer Name</label>
-                    <input type="text" id="admPfName">
-                </div>
-                <div class="field">
-                    <label>Tagline</label>
-                    <input type="text" id="admPfTagline">
-                </div>
-                <div class="field">
-                    <label>Bio (Bengali)</label>
-                    <textarea id="admPfAboutBn"></textarea>
-                </div>
-                <div class="field">
-                    <label>Bio (English)</label>
-                    <textarea id="admPfAboutEn"></textarea>
-                </div>
-                <div class="field">
-                    <label>Email</label>
-                    <input type="email" id="admPfEmail">
-                </div>
-                <button class="btn-primary" id="admSaveProfileBtn">✅ Save Profile</button>
-            </div>
-
-            <!-- APPS TAB -->
-            <div id="tab-apps" class="tab-content" style="display:none;">
-                <h4 style="margin-bottom:12px; color:var(--blue);">Add New Application</h4>
-                <div class="field">
-                    <label>App Name *</label>
-                    <input type="text" id="admAppName">
-                </div>
-                <div class="field">
-                    <label>Category</label>
-                    <select id="admAppCat">
-                        <option value="App">App</option>
-                        <option value="Game">Game</option>
-                        <option value="Tool">Tool</option>
-                    </select>
-                </div>
-                <div class="field">
-                    <label>App Logo / Thumbnail (Dual Mode)</label>
-                    <div class="dual-input-wrap">
-                        <input type="text" id="admAppImgUrl" placeholder="Thumbnail Image URL">
-                        <input type="file" id="admAppImgFile" accept="image/*">
-                    </div>
-                </div>
-                <div class="field">
-                    <label>APK / Download File (Dual Mode)</label>
-                    <div class="dual-input-wrap">
-                        <input type="text" id="admAppFileUrl" placeholder="External Download URL">
-                        <input type="file" id="admAppFileBlob">
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Video Tutorial Link (YouTube/Direct)</label>
-                    <input type="text" id="admAppVideo">
-                </div>
-                <div class="field">
-                    <label>Description (Bengali)</label>
-                    <textarea id="admAppDesc"></textarea>
-                </div>
-                <button class="btn-primary" id="admSaveAppBtn">💾 Create Application Record</button>
-            </div>
-
-            <!-- WEBSITES TAB -->
-            <div id="tab-websites" class="tab-content" style="display:none;">
-                <h4 style="margin-bottom:12px; color:var(--purple);">Add Website Entry</h4>
-                <div class="field">
-                    <label>Website Name</label>
-                    <input type="text" id="admWebName">
-                </div>
-                <div class="field">
-                    <label>Live URL</label>
-                    <input type="url" id="admWebUrl">
-                </div>
-                <div class="field">
-                    <label>Thumbnail (Dual Mode)</label>
-                    <div class="dual-input-wrap">
-                        <input type="text" id="admWebImgUrl" placeholder="Thumbnail Image URL">
-                        <input type="file" id="admWebImgFile" accept="image/*">
-                    </div>
-                </div>
-                <button class="btn-primary" id="admSaveWebBtn">💾 Store Website</button>
-            </div>
-
-            <!-- SERVER SETTINGS TAB -->
-            <div id="tab-server" class="tab-content" style="display:none;">
-                <h4 style="margin-bottom:10px;">Backend Health Diagnostics</h4>
-                <pre id="serverHealthReport" style="background:#000; padding:12px; border-radius:8px; font-size:12px; color:var(--green);"></pre>
-                <div class="field" style="margin-top:16px;">
-                    <label>Current Frontend Target Endpoint</label>
-                    <input type="text" id="admApiBaseOverride" readonly>
+                <div class="lang-switch">
+                    <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+                    <button class="lang-btn active" data-lang="bn">🇧🇩 বাং</button>
                 </div>
             </div>
-        </div>
-
-        <div style="padding:14px 24px; border-top:1px solid var(--border);">
-            <button class="btn-ghost" id="adminCloseBtn">Close Admin Control</button>
         </div>
     </div>
-</div>
 
-<!-- ================= VIDEO MODAL ================= -->
-<div class="modal-overlay" id="videoModal">
-    <div class="video-box">
-        <h3 id="videoTitle" style="text-align:center; margin-bottom:12px;">Tutorial</h3>
-        <div id="videoContent"></div>
-        <button class="btn-ghost" id="videoClose">Close Video</button>
+    <!-- ================= PROFILE VIEW ================= -->
+    <div id="view-profile">
+        <header>
+            <div class="container">
+                <img class="logo" id="pfLogo" src="https://i.postimg.cc/X7kpKwx7/Picsart-26-09-07-22-20-41-182.jpg" alt="Logo">
+                <h1 class="name" id="pfName">MahimHossainBD</h1>
+                <div class="tagline" id="pfTagline">Developer and create app</div>
+                <p class="about" id="pfAbout">আমি হলো একজন Developer এবং তোমাদের App, ওয়েবসাইট বানানো শিখাই।</p>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="section">
+                <h2 class="section-title">Online <span>Links</span></h2>
+                <div class="links" id="linksGrid"></div>
+            </section>
+
+            <section class="contact">
+                <h2 class="contact-title" style="margin-bottom:10px;">Contact Me</h2>
+                <a class="email" id="pfEmail" href="mailto:MahimHossainBD@gmail.com">MahimHossainBD@gmail.com</a>
+            </section>
+        </main>
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <!-- ================= APP STORE VIEW ================= -->
+    <div id="view-store" style="display:none;">
+        <main class="container">
+            <section class="section">
+                <h2 class="section-title">📦 অ্যাপ <span>স্টোর</span></h2>
+                <div class="search-wrap">
+                    <input type="text" id="appSearch" placeholder="অ্যাপের নাম দিয়ে খুঁজুন...">
+                </div>
+                <div class="chips" id="appChips"></div>
+                <div id="appsGrid" class="apps-grid"></div>
+                <div id="appsEmpty" style="display:none; text-align:center; padding:40px; color:var(--muted);">কোনো অ্যাপ পাওয়া যায়নি।</div>
+            </section>
+        </main>
+    </div>
 
-<footer>
-    © <span id="year"></span> MahimHossainBD. All rights reserved.
-    <br>
-    <span class="footer-admin" id="secretAdmin">· admin ·</span>
-</footer>
+    <!-- ================= WEBSITE STORE VIEW ================= -->
+    <div id="view-web" style="display:none;">
+        <main class="container">
+            <section class="section">
+                <h2 class="section-title">🌐 ওয়েবসাইট <span>স্টোর</span></h2>
+                <div id="webGrid" class="apps-grid"></div>
+                <div id="webEmpty" style="display:none; text-align:center; padding:40px; color:var(--muted);">কোনো ওয়েবসাইট যোগ করা হয়নি।</div>
+            </section>
+        </main>
+    </div>
 
-<!-- Centralized Config and App Scripts -->
-<script src="config.js"></script>
-<script src="js/app.js"></script>
+    <!-- ================= ADMIN LOGIN MODAL ================= -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <h2 style="text-align:center; margin-bottom:6px;">🔐 অ্যাডমিন লগইন</h2>
+            <p style="text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px;">MahimHossainBD কন্ট্রোল সেন্টার</p>
+
+            <div id="loginCredentialsForm">
+                <div class="field">
+                    <label>ইউজারনেম</label>
+                    <input type="text" id="loginUser" placeholder="Username (e.g. MrMahimFire)">
+                </div>
+                <div class="field">
+                    <label>পাসওয়ার্ড</label>
+                    <input type="password" id="loginPass" placeholder="Password">
+                </div>
+                <button class="btn-primary" id="loginSubmitBtn">লগইন করুন</button>
+            </div>
+
+            <div id="loginOtpForm" style="display:none;">
+                <div class="field">
+                    <label>Security 6-Digit OTP</label>
+                    <input type="text" id="loginOtpInput" placeholder="123456" maxlength="6">
+                </div>
+                <button class="btn-primary" id="loginOtpSubmitBtn">Verify & Enter</button>
+            </div>
+
+            <button class="btn-ghost" id="loginClose">বাতিল</button>
+            <div id="loginError" style="color:var(--red); font-size:13px; text-align:center; margin-top:10px; display:none;"></div>
+        </div>
+    </div>
+
+    <!-- ================= FULL ADMIN CONTROL PANEL ================= -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal admin-modal">
+            <div class="admin-header">
+                <h3>⚙️ MahimHossainBD Production Control</h3>
+                <button id="adminLogoutBtn" style="background:var(--red); color:#fff; padding:6px 14px; border-radius:8px; font-weight:bold;">🚪 Logout</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab active" data-tab="profile">👤 Profile</button>
+                <button class="tab" data-tab="apps">📦 Apps</button>
+                <button class="tab" data-tab="websites">🌐 Websites</button>
+                <button class="tab" data-tab="server">🔌 Server Settings</button>
+            </div>
+
+            <div class="admin-body">
+                <!-- PROFILE TAB -->
+                <div id="tab-profile" class="tab-content">
+                    <div class="field">
+                        <label>Profile Picture / Logo (Dual Mode: URL or File)</label>
+                        <div class="dual-input-wrap">
+                            <input type="text" id="admPfLogoUrl" placeholder="Direct Image URL (https://...)">
+                            <input type="file" id="admPfLogoFile" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Developer Name</label>
+                        <input type="text" id="admPfName">
+                    </div>
+                    <div class="field">
+                        <label>Tagline</label>
+                        <input type="text" id="admPfTagline">
+                    </div>
+                    <div class="field">
+                        <label>Bio (Bengali)</label>
+                        <textarea id="admPfAboutBn"></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Bio (English)</label>
+                        <textarea id="admPfAboutEn"></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" id="admPfEmail">
+                    </div>
+                    <button class="btn-primary" id="admSaveProfileBtn">✅ Save Profile Permanently</button>
+                </div>
+
+                <!-- APPS TAB -->
+                <div id="tab-apps" class="tab-content" style="display:none;">
+                    <h4 style="margin-bottom:12px; color:var(--blue);">Add New Application</h4>
+                    <div class="field">
+                        <label>App Name *</label>
+                        <input type="text" id="admAppName">
+                    </div>
+                    <div class="field">
+                        <label>Category</label>
+                        <select id="admAppCat">
+                            <option value="App">App</option>
+                            <option value="Game">Game</option>
+                            <option value="Tool">Tool</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>App Logo / Thumbnail (Dual Mode)</label>
+                        <div class="dual-input-wrap">
+                            <input type="text" id="admAppImgUrl" placeholder="Thumbnail Image URL">
+                            <input type="file" id="admAppImgFile" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>APK / Download File (Dual Mode)</label>
+                        <div class="dual-input-wrap">
+                            <input type="text" id="admAppFileUrl" placeholder="External Download URL">
+                            <input type="file" id="admAppFileBlob">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Video Tutorial Link (YouTube / URL)</label>
+                        <input type="text" id="admAppVideo">
+                    </div>
+                    <div class="field">
+                        <label>Description (Bengali)</label>
+                        <textarea id="admAppDesc"></textarea>
+                    </div>
+                    <button class="btn-primary" id="admSaveAppBtn">💾 Create Application</button>
+                </div>
+
+                <!-- WEBSITES TAB -->
+                <div id="tab-websites" class="tab-content" style="display:none;">
+                    <h4 style="margin-bottom:12px; color:var(--purple);">Add Website Entry</h4>
+                    <div class="field">
+                        <label>Website Name</label>
+                        <input type="text" id="admWebName">
+                    </div>
+                    <div class="field">
+                        <label>Website URL</label>
+                        <input type="url" id="admWebUrl">
+                    </div>
+                    <div class="field">
+                        <label>Thumbnail (Dual Mode)</label>
+                        <div class="dual-input-wrap">
+                            <input type="text" id="admWebImgUrl" placeholder="Thumbnail Image URL">
+                            <input type="file" id="admWebImgFile" accept="image/*">
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="admSaveWebBtn">💾 Store Website</button>
+                </div>
+
+                <!-- SERVER SETTINGS TAB -->
+                <div id="tab-server" class="tab-content" style="display:none;">
+                    <h4 style="margin-bottom:10px;">Backend Health & Diagnostics</h4>
+                    <pre id="serverHealthReport" style="background:#000; padding:12px; border-radius:8px; font-size:12px; color:var(--green);"></pre>
+                    <div class="field" style="margin-top:16px;">
+                        <label>Live API Endpoint</label>
+                        <input type="text" id="admApiBaseOverride" value="https://mahimhossainbd.onrender.com/api" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding:14px 24px; border-top:1px solid var(--border);">
+                <button class="btn-ghost" id="adminCloseBtn">Close Admin Control</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= VIDEO MODAL ================= -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="video-box">
+            <h3 id="videoTitle" style="text-align:center; margin-bottom:12px;">Tutorial</h3>
+            <div id="videoContent"></div>
+            <button class="btn-ghost" id="videoClose">Close Video</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast"></div>
+
+    <footer>
+        © <span id="year"></span> MahimHossainBD. All rights reserved.
+        <br>
+        <span class="footer-admin" id="secretAdmin">· admin ·</span>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="js/app.js"></script>
 </body>
-  </html>
+                                                 </html>
