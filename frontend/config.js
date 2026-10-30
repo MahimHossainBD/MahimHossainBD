@@ -1,9 +1,23 @@
 /**
- * MahimHossainBD - Unified Frontend API Configuration
- * Change this URL to connect your frontend with your backend server.
+ * MahimHossainBD - Unified Frontend & Firebase Configuration
  */
+
+// ১. আপনার দেওয়া Firebase কনফিগারেশন
+const firebaseConfig = {
+  apiKey: "AIzaSyBNWiaiL6IB2BR-dzHKBzL01MPF1urs7RY",
+  authDomain: "mahimhossain-bd.firebaseapp.com",
+  databaseURL: "https://mahimhossain-bd-default-rtdb.firebaseio.com",
+  projectId: "mahimhossain-bd",
+  storageBucket: "mahimhossain-bd.firebasestorage.app",
+  messagingSenderId: "445369690414",
+  appId: "1:445369690414:web:f4e0cb9c8e8295c7cab2bf"
+};
+
+// ২. সেন্ট্রাল ব্যাকএন্ড API কানেকশন
 const CONFIG = {
-    // Single configurable entry point for all API requests
+    firebaseConfig: firebaseConfig,
+
+    // লাইভ সার্ভারের API লিংক
     API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:10000/api'
         : `${window.location.origin}/api`,
@@ -42,7 +56,7 @@ const CONFIG = {
         } catch (error) {
             clearTimeout(timeoutId);
             if (error.name === 'AbortError') {
-                throw new Error('Connection timed out. Server is taking too long to respond.');
+                throw new Error('Connection timed out. Server taking too long.');
             }
             throw error;
         }
