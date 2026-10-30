@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — MahimHossainBD</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --blue:#1677ff; --dark:#05070b; --dark-card:#0d1118; --dark-2:#070a10;
+            --white:#ffffff; --text:#dce5f2; --muted:#8d9aaa; --border:rgba(255,255,255,0.09);
+            --green:#22c55e; --red:#ef4444;
+        }
+        body { font-family: Arial, Helvetica, sans-serif; background: var(--dark); color: var(--white); min-height: 100vh; }
+        .topbar {
+            background: #0d1118; border-bottom: 1px solid var(--border); padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .topbar h2 { font-size: 18px; color: var(--blue); }
+        .logout-btn { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .container { max-width: 1050px; margin: 24px auto; padding: 0 16px; }
+        .tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border); overflow-x: auto; margin-bottom: 20px; }
+        .tab { padding: 11px 18px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-weight: bold; font-size: 14px; }
+        .tab.active { color: #fff; border-bottom: 2px solid var(--blue); }
+        .card { background: var(--dark-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; color: var(--text); }
+        .field input, .field textarea, .field select {
+            width: 100%; padding: 11px 14px; background: var(--dark-2); border: 1px solid var(--border); border-radius: 9px; color: #fff; font-size: 14px; outline: none;
+        }
+        .dual-wrap { display: flex; gap: 10px; align-items: center; }
+        .dual-wrap input[type="text"] { flex: 1; }
+        .dual-wrap input[type="file"] { max-width: 150px; font-size: 11px; cursor: pointer; }
+        .btn-save { background: linear-gradient(135deg, #1677ff, #0d63dc); color: #fff; padding: 12px 24px; border-radius: 9px; font-weight: bold; border: none; cursor: pointer; }
+        .switch-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .switch-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--blue); cursor: pointer; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1677ff; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: bold; display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; font-size: 13px; }
+        .del-btn { background: rgba(239,68,68,0.2); color: #fca5a5; padding: 4px 8px; border-radius: 6px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h2>⚙️ MahimHossainBD Server Control</h2>
+        <div>
+            <a href="/" target="_blank" style="color:var(--text); text-decoration:none; margin-right:15px; font-size:13px;">🌐 View Live Site</a>
+            <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="profile">👤 Profile</button>
+            <button class="tab" data-tab="apps">📦 Apps</button>
+            <button class="tab" data-tab="websites">🌐 Websites</button>
+            <button class="tab" data-tab="settings">⚙️ Settings & OTP</button>
+            <button class="tab" data-tab="policies">📜 Policies</button>
+        </div>
+
+        <!-- 1. PROFILE TAB -->
+        <div id="tab-profile" class="tab-pane">
+            <div class="card">
+                <h3>প্রোফাইল তথ্য</h3>
+                <div class="field" style="margin-top:15px;">
+                    <label>Logo / Avatar (URL or File Upload)</label>
+                    <div class="dual-wrap">
+                        <input type="text" id="pfLogo" placeholder="Direct Image URL">
+                        <input type="file" id="pfLogoFile" accept="image/*">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>নাম</label>
+                    <input type="text" id="pfName">
+                </div>
+                <div class="field">
+                    <label>ট্যাগলাইন</label>
+                    <input type="text" id="pfTagline">
+                </div>
+                <div class="field">
+                    <label>বায়ো (বাংলা)</label>
+                    <textarea id="pfAboutBn" rows="3"></textarea>
+                </div>
+                <div class="field">
+                    <label>বায়ো (English)</label>
+                    <textarea id="pfAboutEn" rows="3"></textarea>
+                </div>
+                <div class="field">
+                    <label>ইমেইল</label>
+                    <input type="email" id="pfEmail">
+                </div>
+                <button class="btn-save" id="saveProfileBtn">Save Profile</button>
+            </div>
+        </div>
+
+        <!-- 2. APPS TAB -->
+        <div id="tab-apps" class="tab-pane" style="display:none;">
+            <div class="card">
+                <h3>নতুন অ্যাপ যোগ করুন</h3>
+                <div class="field" style="margin-top:15px;">
+                    <label>অ্যাপের নাম</label>
+                    <input type="text" id="appName" placeholder="e.g. My Calculator">
+                </div>
+                <div class="field">
+                    <label>ক্যাটাগরি</label>
+                    <select id="appCat">
+                        <option value="App">App</option>
+                        <option value="Game">Game</option>
+                        <option value="Tool">Tool</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>অ্যাপ থাম্বনেইল / লোগো (URL or Upload)</label>
+                    <div class="dual-wrap">
+                        <input type="text" id="appImg" placeholder="Image URL">
+                        <input type="file" id="appImgFile" accept="image/*">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>APK / Download File (URL or Upload)</label>
+                    <div class="dual-wrap">
+                        <input type="text" id="appFile" placeholder="External Download URL">
+                        <input type="file" id="appFileBlob">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>ভিডিও টিউটোরিয়াল লিংক (YouTube / Direct)</label>
+                    <input type="text" id="appVideo" placeholder="https://youtube.com/watch?v=...">
+                </div>
+                <div class="field">
+                    <label>বর্ণনা (বাংলা)</label>
+                    <textarea id="appDesc" rows="3"></textarea>
+                </div>
+                <button class="btn-save" id="saveAppBtn">Save App</button>
+            </div>
+            <div class="card">
+                <h3>বিদ্যমান অ্যাপ তালিকা</h3>
+                <table>
+                    <thead><tr><th>নাম</th><th>ক্যাটাগরি</th><th>অ্যাকশন</th></tr></thead>
+                    <tbody id="appsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. WEBSITES TAB -->
+        <div id="tab-websites" class="tab-pane" style="display:none;">
+            <div class="card">
+                <h3>নতুন ওয়েবসাইট যোগ করুন</h3>
+                <div class="field" style="margin-top:15px;">
+                    <label>ওয়েবসাইট নাম</label>
+                    <input type="text" id="webName">
+                </div>
+                <div class="field">
+                    <label>ওয়েবসাইট লিংক (URL)</label>
+                    <input type="url" id="webUrl" placeholder="https://...">
+                </div>
+                <div class="field">
+                    <label>থাম্বনেইল (URL or Upload)</label>
+                    <div class="dual-wrap">
+                        <input type="text" id="webImg" placeholder="Image URL">
+                        <input type="file" id="webImgFile" accept="image/*">
+                    </div>
+                </div>
+                <button class="btn-save" id="saveWebBtn">Save Website</button>
+            </div>
+            <div class="card">
+                <h3>বিদ্যমান ওয়েবসাইট তালিকা</h3>
+                <table>
+                    <thead><tr><th>নাম</th><th>লিংক</th><th>অ্যাকশন</th></tr></thead>
+                    <tbody id="websTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. SETTINGS & OTP TAB -->
+        <div id="tab-settings" class="tab-pane" style="display:none;">
+            <div class="card">
+                <h3>সার্ভার ও সিকিউরিটি কনফিগারেশন</h3>
+                <div class="field" style="margin-top:15px;">
+                    <label>ওয়েবসাইট টাইটেল</label>
+                    <input type="text" id="setSiteTitle">
+                </div>
+                <div class="field">
+                    <label>সিকিউরিটি Email OTP সিস্টেম</label>
+                    <div class="switch-row">
+                        <input type="checkbox" id="setOtpToggle">
+                        <span>অ্যাডমিন লগইনের সময় Email OTP বাধ্যতামূলক করুন</span>
+                    </div>
+                </div>
+                <button class="btn-save" id="saveSettingsBtn">Save Settings</button>
+            </div>
+        </div>
+
+        <!-- 5. POLICIES TAB -->
+        <div id="tab-policies" class="tab-pane" style="display:none;">
+            <div class="card">
+                <h3>Privacy Policy & Terms এডিটর</h3>
+                <div class="field" style="margin-top:15px;">
+                    <label>Privacy Policy (বাংলা)</label>
+                    <textarea id="policyPrivacyBn" rows="5"></textarea>
+                </div>
+                <div class="field">
+                    <label>Terms & Conditions (বাংলা)</label>
+                    <textarea id="policyTermsBn" rows="5"></textarea>
+                </div>
+                <button class="btn-save" id="savePoliciesBtn">Save Policies</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Saved!</div>
+
+    <script>
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2200);
+        }
+
+        // ট্যাব সুইচিং
+        document.querySelectorAll('.tab').forEach(b => {
+            b.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+                b.classList.add('active');
+                document.getElementById(`tab-${b.dataset.tab}`).style.display = 'block';
+            });
+        });
+
+        // ডুয়েল আপলোড হেল্পার (ফাইল দিলে ফাইল আপলোড করবে, না দিলে URL নেবে)
+        async function getDualMedia(urlInputId, fileInputId) {
+            const file = document.getElementById(fileInputId).files[0];
+            if (file) {
+                const fd = new FormData();
+                fd.append('file', file);
+                const res = await fetch('/api/upload', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'File upload failed');
+                return data.url;
+            }
+            return document.getElementById(urlInputId).value.trim();
+        }
+
+        // ডাটা লোড
+        async function loadAdminData() {
+            const pRes = await (await fetch('/api/profile')).json();
+            if (pRes.success) {
+                document.getElementById('pfName').value = pRes.profile.name || '';
+                document.getElementById('pfTagline').value = pRes.profile.tagline || '';
+                document.getElementById('pfAboutBn').value = pRes.profile.about_bn || '';
+                document.getElementById('pfAboutEn').value = pRes.profile.about_en || '';
+                document.getElementById('pfEmail').value = pRes.profile.email || '';
+                document.getElementById('pfLogo').value = pRes.profile.logo_url || '';
+            }
+
+            const sRes = await (await fetch('/api/settings')).json();
+            if (sRes.success) {
+                document.getElementById('setSiteTitle').value = sRes.settings.site_title || '';
+                document.getElementById('setOtpToggle').checked = sRes.settings.otp_enabled === 'true';
+                sRes.policies.forEach(p => {
+                    if (p.slug === 'privacy') document.getElementById('policyPrivacyBn').value = p.content_bn;
+                    if (p.slug === 'terms') document.getElementById('policyTermsBn').value = p.content_bn;
+                });
+            }
+
+            renderTables();
+        }
+
+        async function renderTables() {
+            const aRes = await (await fetch('/api/apps')).json();
+            const aBody = document.getElementById('appsTableBody');
+            aBody.innerHTML = '';
+            (aRes.data || []).forEach(a => {
+                aBody.innerHTML += `<tr>
+                    <td>${a.name}</td><td>${a.category}</td>
+                    <td><button class="del-btn" onclick="deleteApp(${a.id})">Delete</button></td>
+                </tr>`;
+            });
+
+            const wRes = await (await fetch('/api/websites')).json();
+            const wBody = document.getElementById('websTableBody');
+            wBody.innerHTML = '';
+            (wRes.data || []).forEach(w => {
+                wBody.innerHTML += `<tr>
+                    <td>${w.name}</td><td><a href="${w.url}" target="_blank" style="color:var(--blue);">${w.url}</a></td>
+                    <td><button class="del-btn" onclick="deleteWeb(${w.id})">Delete</button></td>
+                </tr>`;
+            });
+        }
+
+        window.deleteApp = async (id) => {
+            if (!confirm('ডিলিট করতে চান?')) return;
+            await fetch(`/api/apps/${id}`, { method: 'DELETE' });
+            renderTables();
+        };
+
+        window.deleteWeb = async (id) => {
+            if (!confirm('ডিলিট করতে চান?')) return;
+            await fetch(`/api/websites/${id}`, { method: 'DELETE' });
+            renderTables();
+        };
+
+        // সেভ ইভেন্টস
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            const logo = await getDualMedia('pfLogo', 'pfLogoFile');
+            await fetch('/api/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('pfName').value,
+                    tagline: document.getElementById('pfTagline').value,
+                    about_bn: document.getElementById('pfAboutBn').value,
+                    about_en: document.getElementById('pfAboutEn').value,
+                    email: document.getElementById('pfEmail').value,
+                    logo_url: logo
+                })
+            });
+            showToast('Profile Updated!');
+        });
+
+        document.getElementById('saveAppBtn').addEventListener('click', async () => {
+            const img = await getDualMedia('appImg', 'appImgFile');
+            const file = await getDualMedia('appFile', 'appFileBlob');
+            await fetch('/api/apps', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('appName').value,
+                    category: document.getElementById('appCat').value,
+                    image_url: img,
+                    file_url: file,
+                    video_url: document.getElementById('appVideo').value,
+                    description_bn: document.getElementById('appDesc').value
+                })
+            });
+            showToast('App Created!');
+            renderTables();
+        });
+
+        document.getElementById('saveWebBtn').addEventListener('click', async () => {
+            const img = await getDualMedia('webImg', 'webImgFile');
+            await fetch('/api/websites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('webName').value,
+                    url: document.getElementById('webUrl').value,
+                    thumbnail_url: img
+                })
+            });
+            showToast('Website Stored!');
+            renderTables();
+        });
+
+        document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+            await fetch('/api/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    settings: {
+                        site_title: document.getElementById('setSiteTitle').value,
+                        otp_enabled: document.getElementById('setOtpToggle').checked
+                    }
+                })
+            });
+            showToast('Settings Saved!');
+        });
+
+        document.getElementById('savePoliciesBtn').addEventListener('click', async () => {
+            await fetch('/api/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    policies: [
+                        { slug: 'privacy', title_bn: 'গোপনীয়তা নীতি', title_en: 'Privacy Policy', content_bn: document.getElementById('policyPrivacyBn').value, content_en: document.getElementById('policyPrivacyBn').value },
+                        { slug: 'terms', title_bn: 'শর্তাবলী', title_en: 'Terms', content_bn: document.getElementById('policyTermsBn').value, content_en: document.getElementById('policyTermsBn').value }
+                    ]
+                })
+            });
+            showToast('Policies Saved!');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        });
+
+        loadAdminData();
+    </script>
+</body>
+  </html>
