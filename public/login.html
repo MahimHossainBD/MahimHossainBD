@@ -65,6 +65,7 @@
         </form>
 
         <div class="err-msg" id="errMsg"></div>
+        <a href="/firebase-login" class="back-link">Firebase দিয়ে লগইন</a>
         <a href="/" class="back-link">← মূল ওয়েবসাইটে ফিরে যান</a>
     </div>
 
@@ -88,7 +89,7 @@
                         password: document.getElementById('password').value
                     })
                 });
-                const data = await res.json();
+                const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.message || 'ভুল ইউজারনেম বা পাসওয়ার্ড!');
 
                 if (data.requireOtp) {
@@ -117,7 +118,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: currentEmail, otp: document.getElementById('otpCode').value.trim() })
                 });
-                const data = await res.json();
+                const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.message || 'ভুল OTP কোড!');
 
                 window.location.href = '/admin';
@@ -130,4 +131,4 @@
         });
     </script>
 </body>
-  </html>
+</html>
