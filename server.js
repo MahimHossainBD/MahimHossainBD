@@ -18,6 +18,7 @@ const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
 const app = express();
+app.set('trust proxy', 1); // Render proxy-এর পেছনে সঠিক IP ও secure cookie-র জন্য
 const PORT = process.env.PORT || 10000;
 const JWT_SECRET = process.env.JWT_SECRET || 'MHB_SERVER_FALLBACK_SECRET_KEY_2026';
 
@@ -146,60 +147,64 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// ৩. "/admin" — সুরক্ষিত অ্যাডমিন প্যানেল
+// ৩. "/admin" — সুরক্ষিত অ্যাডমিন প্যানেল (ফাইলটি public-এর বাইরে private/ ফোল্ডারে)
 app.get('/admin', (req, res) => {
     const token = req.cookies.mhb_session;
-    if (!token) {
-        return res.redirect('/login');
-    }
+    if (!token) return res.redirect('/login');
     try {
         jwt.verify(token, JWT_SECRET);
-        res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+        res.setHeader('Cache-Control', 'no-store');
+        res.sendFile(path.join(__dirname, 'private', 'admin.html'));
     } catch (e) {
+        res.clearCookie('mhb_session');
         res.redirect('/login');
     }
 });
 
-// ------------------------------------------------------------
-// ৬. এমার্জেন্সি / অটো অ্যাডমিন সেটআপ রুট
-// ------------------------------------------------------------
-app.get('/setup-admin', async (req, res) => {
-    try {
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS admins (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(100) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                email VARCHAR(255) UNIQUE NOT NULL
-            );
-        `);
-
-        const hash = await bcrypt.hash('Mahim@123', 10);
-        await db.query(`
-            INSERT INTO admins (username, password_hash, email) 
-            VALUES ('MrMahimFire', $1, 'MahimHossainBD@gmail.com')
-            ON CONFLICT (username) DO UPDATE SET password_hash = $1;
-        `, [hash]);
-
-        res.send(`
-            <div style="font-family:sans-serif; text-align:center; padding-top:60px;">
-                <h1 style="color:#22c55e;">✅ অ্যাডমিন সফলভাবে ডাটাবেজে তৈরি ও কনফার্ম হয়েছে!</h1>
-                <p style="font-size:18px; color:#555;">ইউজারনেম: <b>MrMahimFire</b> | পাসওয়ার্ড: <b>Mahim@123</b></p>
-                <br>
-                <a href="/login" style="background:#1677ff; color:#fff; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">এখন লগইন করুন →</a>
-            </div>
-        `);
-    } catch (err) {
-        res.send(`<h1 style="color:red; text-align:center; padding-top:60px;">❌ ডাটাবেজ এরর: ${err.message}</h1>`);
-    }
+// ৪. "/firebase-login" — Firebase দিয়ে বিকল্প লগইন পেজ
+app.get('/firebase-login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'firebase-login.html'));
 });
+
+// ------------------------------------------------------------
+// ৬. স্টার্টআপে অটো ডাটাবেজ সেটআপ ও অ্যাডমিন তৈরি (পাবলিক /setup-admin রুট সরানো হয়েছে)
+// ------------------------------------------------------------
+async function initDatabase() {
+    try {
+        const sql = fs.readFileSync(path.join(__dirname, 'database', 'schema.sql'), 'utf8');
+        await db.query(sql);
+
+        const username = process.env.ADMIN_USERNAME || 'MrMahimFire';
+        const email = process.env.ADMIN_EMAIL || 'MahimHossainBD@gmail.com';
+        const envPass = process.env.ADMIN_PASSWORD;
+        const exists = await db.query('SELECT id FROM admins WHERE username = $1', [username]);
+
+        if (envPass) {
+            // ADMIN_PASSWORD সেট থাকলে প্রতিবার স্টার্টে সেটাই পাসওয়ার্ড (রিসেটের সহজ উপায়)
+            const hash = await bcrypt.hash(envPass, 10);
+            await db.query(
+                `INSERT INTO admins (username, password_hash, email) VALUES ($1, $2, $3)
+                 ON CONFLICT (username) DO UPDATE SET password_hash = $2`,
+                [username, hash, email]
+            );
+            console.log(`[Admin] "${username}" synced from ADMIN_PASSWORD.`);
+        } else if (exists.rows.length === 0) {
+            const hash = await bcrypt.hash('Mahim@123', 10);
+            await db.query('INSERT INTO admins (username, password_hash, email) VALUES ($1, $2, $3)', [username, hash, email]);
+            console.warn(`[Admin] Default admin created: ${username} / Mahim@123 — ADMIN_PASSWORD সেট করে এখনই পাসওয়ার্ড বদলান!`);
+        }
+        console.log('[Database] Schema ready.');
+    } catch (err) {
+        console.error('[Database Init Error]:', err.message);
+    }
+}
 
 // ------------------------------------------------------------
 // ৭. ব্যাকএন্ড REST API
 // ------------------------------------------------------------
 
-// হেলথ চেক API
-app.get('/api', async (req, res) => {
+// হেলথ চেক API (Render healthCheckPath: /api/health)
+app.get(['/api', '/api/health'], async (req, res) => {
     let dbStatus = 'DISCONNECTED';
     try {
         await db.query('SELECT 1');
@@ -215,28 +220,59 @@ app.get('/api', async (req, res) => {
 
 // ==================== AUTH APIs ====================
 
-// ক) ফায়ারবেজ ফ্রি লগইন সেশন API
-app.post('/api/auth/firebase-login', (req, res) => {
-    const { email } = req.body;
-    if (!email) {
-        return res.status(400).json({ success: false, message: 'Email required' });
-    }
+// লগইন/OTP ব্রুট-ফোর্স ঠেকাতে কড়া লিমিটার (১৫ মিনিটে ১০ বার)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { success: false, message: 'অনেকবার চেষ্টা করা হয়েছে। ১৫ মিনিট পরে আবার চেষ্টা করুন।' }
+});
 
-    // ৭ দিনের সিকিউর অ্যাডমিন কুকি ইস্যু করা
-    const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
+function issueSession(res, admin) {
+    const token = jwt.sign({ id: admin.id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
     res.cookie('mhb_session', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
+    return token;
+}
 
-    res.json({ success: true, message: 'Firebase Admin Session Created Successfully' });
+// ক) Firebase লগইন — ID টোকেন Google-এর মাধ্যমে যাচাই করে, তারপর admins টেবিলে ইমেইল মেলায়
+app.post('/api/auth/firebase-login', authLimiter, async (req, res) => {
+    const { idToken } = req.body;
+    if (!idToken) {
+        return res.status(400).json({ success: false, message: 'Firebase token required.' });
+    }
+    try {
+        const apiKey = process.env.FIREBASE_API_KEY || 'AIzaSyBNWiaiL6IB2BR-dzHKBzL01MPF1urs7RY';
+        const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+        });
+        const data = await r.json();
+        const fbUser = data.users && data.users[0];
+        if (!r.ok || !fbUser || !fbUser.email) {
+            return res.status(401).json({ success: false, message: 'Firebase টোকেন সঠিক নয়।' });
+        }
+        const found = await db.query('SELECT id, username FROM admins WHERE LOWER(email) = LOWER($1)', [fbUser.email]);
+        if (found.rows.length === 0) {
+            return res.status(403).json({ success: false, message: 'এই ইমেইল অ্যাডমিন তালিকায় নেই।' });
+        }
+        issueSession(res, found.rows[0]);
+        res.json({ success: true, message: 'Firebase Admin Session Created Successfully' });
+    } catch (e) {
+        res.status(500).json({ success: false, message: 'Firebase যাচাই করা যায়নি: ' + e.message });
+    }
 });
 
-// খ) স্ট্যান্ডার্ড ইউজারনেম ও পাসওয়ার্ড লগইন API (OTP সাপোর্টসহ)
-app.post('/api/auth/login', async (req, res) => {
+// খ) ইউজারনেম ও পাসওয়ার্ড লগইন (OTP সাপোর্টসহ)
+app.post('/api/auth/login', authLimiter, async (req, res) => {
     const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ success: false, message: 'ইউজারনেম ও পাসওয়ার্ড দিন।' });
+    }
     try {
         const userRes = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
         if (userRes.rows.length === 0) {
@@ -248,7 +284,6 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'ভুল ইউজারনেম বা পাসওয়ার্ড!' });
         }
 
-        // OTP সেটিংস যাচাই
         let isOtpOn = false;
         try {
             const otpSetting = await db.query('SELECT value FROM settings WHERE key = $1', ['otp_enabled']);
@@ -272,24 +307,20 @@ app.post('/api/auth/login', async (req, res) => {
             });
         }
 
-        // সরাসরি টোকেন ইস্যু
-        const token = jwt.sign({ id: admin.id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
-        res.cookie('mhb_session', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
-
+        const token = issueSession(res, admin);
         res.json({ success: true, requireOtp: false, token });
     } catch (e) {
-        res.status(500).json({ success: false, message: e.message });
+        console.error('[Login Error]', e.message);
+        res.status(500).json({ success: false, message: 'সার্ভার/ডাটাবেজ সমস্যা: ' + e.message });
     }
 });
 
 // গ) OTP ভেরিফাই
-app.post('/api/auth/verify-otp', async (req, res) => {
+app.post('/api/auth/verify-otp', authLimiter, async (req, res) => {
     const { email, otp } = req.body;
+    if (!email || !otp) {
+        return res.status(400).json({ success: false, message: 'OTP দিন।' });
+    }
     try {
         const record = await db.query(
             'SELECT * FROM otp_codes WHERE email = $1 AND is_used = FALSE AND expires_at > CURRENT_TIMESTAMP ORDER BY id DESC LIMIT 1',
@@ -298,22 +329,14 @@ app.post('/api/auth/verify-otp', async (req, res) => {
         if (record.rows.length === 0) {
             return res.status(400).json({ success: false, message: 'Invalid or expired OTP.' });
         }
-        const isValid = await bcrypt.compare(otp, record.rows[0].code_hash);
+        const isValid = await bcrypt.compare(String(otp), record.rows[0].code_hash);
         if (!isValid) {
             return res.status(400).json({ success: false, message: 'ভুল OTP কোড!' });
         }
 
         await db.query('UPDATE otp_codes SET is_used = TRUE WHERE id = $1', [record.rows[0].id]);
         const admin = (await db.query('SELECT id, username FROM admins WHERE email = $1', [email])).rows[0];
-
-        const token = jwt.sign({ id: admin.id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
-        res.cookie('mhb_session', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
-
+        const token = issueSession(res, admin);
         res.json({ success: true, token });
     } catch (e) {
         res.status(500).json({ success: false, message: e.message });
@@ -548,11 +571,11 @@ app.post('/api/upload', requireAdmin, upload.single('file'), async (req, res) =>
 // ------------------------------------------------------------
 // ৮. সার্ভার স্টার্ট
 // ------------------------------------------------------------
-app.listen(PORT, () => {
+initDatabase().finally(() => app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(`[MahimHossainBD Production Server Live]`);
     console.log(`Port: ${PORT}`);
     console.log(`Mode: ${process.env.NODE_ENV || 'production'}`);
     console.log(`Live URL: http://localhost:${PORT}`);
     console.log(`====================================================`);
-});
+}));
