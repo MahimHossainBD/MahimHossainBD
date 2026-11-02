@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>অ্যাডমিন প্যানেল — MahimHossainBD</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;background:#05070b;color:#fff;min-height:100vh;padding-bottom:60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:#0d1118;border-bottom:1px solid rgba(255,255,255,.1);position:sticky;top:0;z-index:5}
+header h1{font-size:16px}
+.btn{border:none;border-radius:9px;padding:10px 14px;font-weight:700;font-size:13px;color:#fff;background:#1677ff;cursor:pointer}
+.btn.red{background:#ef4444}.btn.gray{background:#2a3444}.btn.sm{padding:6px 10px;font-size:12px}
+nav{display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.08)}
+nav button{background:none;border:none;color:#8d9aaa;font-weight:700;font-size:13px;padding:10px 12px;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
+nav button.on{color:#fff;border-color:#1677ff}
+main{max-width:760px;margin:0 auto;padding:18px 16px}
+.tab{display:none}.tab.on{display:block}
+.card{background:#0d1118;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px;margin-bottom:16px}
+h3{font-size:15px;margin-bottom:12px;color:#5aa2ff}
+label{display:block;font-size:11px;font-weight:700;color:#dce5f2;margin:12px 0 6px;text-transform:uppercase}
+input,textarea,select{width:100%;padding:11px 12px;border-radius:9px;background:#070a10;border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14px;outline:none;font-family:inherit}
+input:focus,textarea:focus,select:focus{border-color:#1677ff}
+textarea{min-height:80px;resize:vertical}
+input[type=file]{padding:8px;font-size:12px;margin-top:6px}
+input[type=checkbox]{width:auto;margin-right:8px}
+.row{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:6px;margin-bottom:8px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)}
+.item:first-of-type{border-top:none}
+.item b{font-size:14px;display:block}.item small{color:#8d9aaa;font-size:12px;word-break:break-all}
+.item .acts{display:flex;gap:6px;flex-shrink:0}
+.note{font-size:12px;color:#8d9aaa;margin-top:8px;line-height:1.5}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#22c55e;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;display:none;z-index:20;max-width:90%}
+#toast.bad{background:#ef4444}
+@media(max-width:560px){.row{grid-template-columns:1fr 1fr}.row input:nth-child(3){grid-column:1/3}}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚙️ MahimHossainBD অ্যাডমিন</h1>
+  <div><a href="/" class="btn gray sm" style="text-decoration:none;display:inline-block">সাইট</a> <button class="btn red sm" id="logout">লগআউট</button></div>
+</header>
+<nav id="tabs">
+  <button class="on" data-t="profile">👤 প্রোফাইল</button>
+  <button data-t="apps">📦 অ্যাপ</button>
+  <button data-t="webs">🌐 ওয়েবসাইট</button>
+  <button data-t="sett">🔌 সেটিংস</button>
+</nav>
+<main>
+  <section class="tab on" id="t-profile">
+    <div class="card">
+      <h3>প্রোফাইল</h3>
+      <label>লোগো (URL অথবা ফাইল)</label>
+      <input id="pLogo" placeholder="https://..."><input type="file" accept="image/*" data-for="pLogo">
+      <label>নাম</label><input id="pName">
+      <label>ট্যাগলাইন</label><input id="pTag">
+      <label>বায়ো (বাংলা)</label><textarea id="pBn"></textarea>
+      <label>বায়ো (English)</label><textarea id="pEn"></textarea>
+      <label>ইমেইল</label><input id="pMail" type="email">
+    </div>
+    <div class="card">
+      <h3>সোশ্যাল লিংক</h3>
+      <div id="links"></div>
+      <button class="btn gray sm" id="addLink">+ লিংক যোগ করুন</button>
+      <p class="note">আইকন: youtube, tiktok, telegram অথবা link</p>
+    </div>
+    <button class="btn" id="saveProfile" style="width:100%">✅ প্রোফাইল সেভ করুন</button>
+  </section>
+
+  <section class="tab" id="t-apps">
+    <div class="card"><h3>অ্যাপ তালিকা</h3><div id="appList">লোড হচ্ছে...</div></div>
+    <div class="card">
+      <h3>নতুন অ্যাপ যোগ করুন</h3>
+      <label>নাম *</label><input id="aName">
+      <label>ক্যাটাগরি</label><select id="aCat"><option>App</option><option>Game</option><option>Tool</option></select>
+      <label>ভার্সন</label><input id="aVer" value="1.0.0">
+      <label>থাম্বনেইল * (URL অথবা ফাইল)</label>
+      <input id="aImg" placeholder="https://..."><input type="file" accept="image/*" data-for="aImg">
+      <label>APK / ডাউনলোড ফাইল * (URL অথবা ফাইল)</label>
+      <input id="aFile" placeholder="https://..."><input type="file" data-for="aFile">
+      <label>ভিডিও টিউটোরিয়াল লিংক</label><input id="aVid">
+      <label>বিবরণ (বাংলা) *</label><textarea id="aDesc"></textarea>
+      <label><input type="checkbox" id="aFeat">Featured (পিন)</label>
+      <button class="btn" id="saveApp" style="width:100%;margin-top:12px">💾 অ্যাপ তৈরি করুন</button>
+    </div>
+  </section>
+
+  <section class="tab" id="t-webs">
+    <div class="card"><h3>ওয়েবসাইট তালিকা</h3><div id="webList">লোড হচ্ছে...</div></div>
+    <div class="card">
+      <h3>নতুন ওয়েবসাইট</h3>
+      <label>নাম *</label><input id="wName">
+      <label>URL *</label><input id="wUrl" placeholder="https://...">
+      <label>থাম্বনেইল (URL অথবা ফাইল)</label>
+      <input id="wImg" placeholder="https://..."><input type="file" accept="image/*" data-for="wImg">
+      <label>বিবরণ (বাংলা)</label><textarea id="wDesc"></textarea>
+      <button class="btn" id="saveWeb" style="width:100%;margin-top:12px">💾 সেভ করুন</button>
+    </div>
+  </section>
+
+  <section class="tab" id="t-sett">
+    <div class="card">
+      <h3>নিরাপত্তা</h3>
+      <label><input type="checkbox" id="otpOn">লগইনে ইমেইল OTP চালু</label>
+      <p class="note">⚠️ OTP চালু করার আগে সার্ভারে SMTP_USER ও SMTP_PASS সেট থাকতে হবে, নাহলে কোড ইমেইলে যাবে না এবং আপনি লগইন করতে পারবেন না।</p>
+      <button class="btn" id="saveSett" style="width:100%;margin-top:12px">✅ সেভ করুন</button>
+    </div>
+    <div class="card">
+      <h3>পাসওয়ার্ড বদলানো</h3>
+      <p class="note">Render → Environment-এ <b>ADMIN_PASSWORD</b> এর মান বদলে সেভ করুন। রিডেপ্লয় হলে সেটাই নতুন পাসওয়ার্ড হবে।</p>
+    </div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(msg, bad) {
+  const t = $('toast');
+  t.textContent = msg; t.className = bad ? 'bad' : ''; t.style.display = 'block';
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = 'none', 3200);
+}
+
+async function api(url, opt = {}) {
+  const headers = {};
+  if (opt.body && !(opt.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+  const r = await fetch(url, { ...opt, headers });
+  if (r.status === 401) { location.href = '/login'; throw new Error('সেশন শেষ, আবার লগইন করুন'); }
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || d.success === false) throw new Error(d.message || ('ত্রুটি ' + r.status));
+  return d;
+}
+const send = (m, url, body) => api(url, { method: m, body: JSON.stringify(body) });
+const run = async (fn, ok) => { try { await fn(); if (ok) toast(ok); } catch (e) { toast('❌ ' + e.message, true); } };
+
+// ট্যাব
+$('tabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.id === 't-' + b.dataset.t));
+});
+
+// ফাইল আপলোড → URL ঘরে বসে যায়
+document.addEventListener('change', e => {
+  const f = e.target; if (f.type !== 'file' || !f.files[0]) return;
+  run(async () => {
+    toast('আপলোড হচ্ছে...');
+    const fd = new FormData(); fd.append('file', f.files[0]);
+    const d = await api('/api/upload', { method: 'POST', body: fd });
+    $(f.dataset.for).value = d.url;
+    toast('✅ আপলোড সম্পন্ন');
+  });
+});
+
+// প্রোফাইল ও লিংক
+function linkRow(l = {}) {
+  const d = document.createElement('div'); d.className = 'row';
+  d.innerHTML = '<input placeholder="নাম" value="' + esc(l.name) + '"><input placeholder="@handle" value="' + esc(l.username_handle || l.user) + '">' +
+    '<input placeholder="URL" value="' + esc(l.url) + '"><button class="btn red sm" type="button">✕</button>';
+  d.querySelector('button').onclick = () => d.remove();
+  $('links').appendChild(d);
+}
+$('addLink').onclick = () => linkRow();
+
+async function loadProfile() {
+  const d = await api('/api/profile'), p = d.profile || {};
+  $('pLogo').value = p.logo_url || ''; $('pName').value = p.name || ''; $('pTag').value = p.tagline || '';
+  $('pBn').value = p.about_bn || ''; $('pEn').value = p.about_en || ''; $('pMail').value = p.email || '';
+  $('links').innerHTML = ''; (d.links || []).forEach(linkRow);
+}
+$('saveProfile').onclick = () => run(async () => {
+  const links = [...$('links').children].map(r => {
+    const [n, u, url] = r.querySelectorAll('input');
+    const name = n.value.trim(), lu = url.value.trim();
+    const icon = ['youtube', 'tiktok', 'telegram'].find(k => (name + lu).toLowerCase().includes(k)) || 'link';
+    return { name, user: u.value.trim(), url: lu, icon };
+  }).filter(l => l.name && l.url);
+  await send('PUT', '/api/profile', {
+    name: $('pName').value, tagline: $('pTag').value, about_bn: $('pBn').value, about_en: $('pEn').value,
+    email: $('pMail').value, logo_url: $('pLogo').value, links
+  });
+  await loadProfile();
+}, '✅ প্রোফাইল সেভ হয়েছে');
+
+// অ্যাপ
+async function loadApps() {
+  const d = await api('/api/apps');
+  $('appList').innerHTML = d.data.length ? d.data.map(a =>
+    '<div class="item"><div><b>' + (a.featured ? '📌 ' : '') + esc(a.name) + '</b><small>' + esc(a.category) + ' • v' + esc(a.version) + '</small></div>' +
+    '<div class="acts"><button class="btn gray sm" data-pin="' + a.id + '">পিন</button><button class="btn red sm" data-del="' + a.id + '">মুছুন</button></div></div>'
+  ).join('') : '<p class="note">কোনো অ্যাপ নেই।</p>';
+}
+$('appList').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.pin) run(async () => { await send('PATCH', '/api/apps/' + b.dataset.pin + '/pin'); await loadApps(); }, '✅ আপডেট হয়েছে');
+  if (b.dataset.del && confirm('এই অ্যাপ মুছে ফেলবেন?')) run(async () => { await send('DELETE', '/api/apps/' + b.dataset.del); await loadApps(); }, '🗑️ মুছে ফেলা হয়েছে');
+});
+$('saveApp').onclick = () => run(async () => {
+  const v = id => $(id).value.trim();
+  if (!v('aName') || !v('aImg') || !v('aFile') || !v('aDesc')) throw new Error('নাম, থাম্বনেইল, ফাইল ও বিবরণ আবশ্যক');
+  await send('POST', '/api/apps', {
+    name: v('aName'), category: $('aCat').value, version: v('aVer') || '1.0.0', image_url: v('aImg'),
+    file_url: v('aFile'), video_url: v('aVid'), description_bn: v('aDesc'), featured: $('aFeat').checked
+  });
+  ['aName', 'aImg', 'aFile', 'aVid', 'aDesc'].forEach(i => $(i).value = ''); $('aFeat').checked = false;
+  await loadApps();
+}, '✅ অ্যাপ তৈরি হয়েছে');
+
+// ওয়েবসাইট
+async function loadWebs() {
+  const d = await api('/api/websites');
+  $('webList').innerHTML = d.data.length ? d.data.map(w =>
+    '<div class="item"><div><b>' + esc(w.name) + '</b><small>' + esc(w.url) + '</small></div>' +
+    '<div class="acts"><button class="btn red sm" data-del="' + w.id + '">মুছুন</button></div></div>'
+  ).join('') : '<p class="note">কোনো ওয়েবসাইট নেই।</p>';
+}
+$('webList').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || !b.dataset.del) return;
+  if (confirm('এই ওয়েবসাইট মুছে ফেলবেন?')) run(async () => { await send('DELETE', '/api/websites/' + b.dataset.del); await loadWebs(); }, '🗑️ মুছে ফেলা হয়েছে');
+});
+$('saveWeb').onclick = () => run(async () => {
+  const v = id => $(id).value.trim();
+  if (!v('wName') || !v('wUrl')) throw new Error('নাম ও URL আবশ্যক');
+  await send('POST', '/api/websites', { name: v('wName'), url: v('wUrl'), thumbnail_url: v('wImg'), description_bn: v('wDesc') });
+  ['wName', 'wUrl', 'wImg', 'wDesc'].forEach(i => $(i).value = '');
+  await loadWebs();
+}, '✅ সেভ হয়েছে');
+
+// সেটিংস
+async function loadSett() {
+  const d = await api('/api/settings');
+  $('otpOn').checked = d.settings && d.settings.otp_enabled === 'true';
+}
+$('saveSett').onclick = () => run(() => send('PUT', '/api/settings', { settings: { otp_enabled: $('otpOn').checked } }), '✅ সেটিংস সেভ হয়েছে');
+
+$('logout').onclick = async () => { try { await send('POST', '/api/auth/logout'); } catch (e) {} location.href = '/login'; };
+
+run(async () => { await api('/api/auth/me'); await Promise.all([loadProfile(), loadApps(), loadWebs(), loadSett()]); });
+</script>
+</body>
+                           </html>
