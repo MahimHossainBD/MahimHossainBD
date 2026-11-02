@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "Single-domain server URL full-stack website system",
   "main": "server.js",
+  "engines": { "node": ">=18" },
   "scripts": {
     "start": "node server.js",
     "init-db": "node database/migrate.js"
