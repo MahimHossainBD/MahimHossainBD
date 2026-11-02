@@ -49,3 +49,17 @@ MahimHossainBD/
 ├── package.json
 ├── render.yaml
 └── server.js
+
+---
+
+## 🔐 অ্যাডমিন লগইন সেটআপ (আপডেটেড)
+
+- লগইন পেজ: `/login` (ইউজারনেম + পাসওয়ার্ড) অথবা `/firebase-login` (Firebase)
+- অ্যাডমিন প্যানেল: `/admin` (ফাইল: `private/admin.html`, লগইন ছাড়া খোলা যায় না)
+- সার্ভার চালু হলে ডাটাবেজ টেবিল ও অ্যাডমিন অটো তৈরি হয় (`/setup-admin` রুট সরানো হয়েছে)
+- Render → Environment-এ এগুলো সেট করুন:
+  - `DATABASE_URL` — PostgreSQL লিংক
+  - `ADMIN_USERNAME` — ডিফল্ট `MrMahimFire`
+  - `ADMIN_PASSWORD` — আপনার শক্তিশালী পাসওয়ার্ড (প্রতি স্টার্টে এটাই পাসওয়ার্ড হয়; বদলাতে চাইলে এটা বদলান)
+  - `JWT_SECRET` — Render অটো তৈরি করে
+- `backend/` ও `frontend/` ফোল্ডার বর্তমান সার্ভার ব্যবহার করে না (পুরনো কোড)।
