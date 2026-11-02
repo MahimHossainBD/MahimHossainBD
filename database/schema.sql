@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS admins (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- ২. গ্লোবাল ওয়েবসাইট সেটিংস ও OTP কনফিগারেশন
+-- ২. গ্লোবাল ওয়েবসাইট সেটিংস ও OTP কনফিগারেশন
 CREATE TABLE IF NOT EXISTS settings (
     key VARCHAR(100) PRIMARY KEY,
     value TEXT NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS applications (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- ৬. ওয়েবসাইট স্টোর টেবিল
+-- ৬. ওয়েবসাইট স্টোর টেবিল
 CREATE TABLE IF NOT EXISTS websites (
     id SERIAL PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS policies (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- ৮. সক্রিয় ইমেইল OTP টেবিল
+-- ৮. সক্রিয় ইমেইল OTP টেবিল
 CREATE TABLE IF NOT EXISTS otp_codes (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
@@ -115,14 +115,12 @@ INSERT INTO settings (key, value) VALUES
 ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO policies (slug, title_bn, title_en, content_bn, content_en) VALUES
-    ('privacy', 'গোপনীয়তা নীতি', 'Privacy Policy', 'আমরা ব্যবহারকারীর তথ্যের সর্বোচ্চ গোপনীয়তা রক্ষা করি।', 'We strictly protect user data and privacy.'),
-    ('terms', 'শর্তাবলী ও নিয়মাবলী', 'Terms & Conditions', 'আমাদের সকল অ্যাপ ও ফাইল ব্যক্তিগত ব্যবহারের জন্য উন্মুক্ত।', 'All files and apps are for personal legitimate use.')
+    ('privacy', 'গোপনীয়তা নীতি', 'Privacy Policy', 'আমরা ব্যবহারকারীর তথ্যের সর্বোচ্চ গোপনীয়তা রক্ষা করি।', 'We strictly protect user data and privacy.'),
+    ('terms', 'শর্তাবলী ও নিয়মাবলী', 'Terms & Conditions', 'আমাদের সকল অ্যাপ ও ফাইল ব্যক্তিগত ব্যবহারের জন্য উন্মুক্ত।', 'All files and apps are for personal legitimate use.')
 ON CONFLICT (slug) DO NOTHING;
 
-INSERT INTO social_links (name, username_handle, url, icon, sort_order)
-SELECT * FROM (VALUES
+INSERT INTO social_links (name, username_handle, url, icon, sort_order) VALUES
     ('YouTube', 'Channel link নেই', '', 'youtube', 1),
     ('TikTok', '@mahimhossainbd', 'https://tiktok.com/@mahimhossainbd', 'tiktok', 2),
     ('Telegram', '@MahimHossainBD', 'https://t.me/MahimHossainBD', 'telegram', 3)
-) AS seed(name, username_handle, url, icon, sort_order)
-WHERE NOT EXISTS (SELECT 1 FROM social_links);
+ON CONFLICT DO NOTHING;
