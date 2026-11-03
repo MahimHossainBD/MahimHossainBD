@@ -45,7 +45,6 @@ input[type=checkbox]{width:auto;margin-right:8px}
   <button class="on" data-t="profile">👤 প্রোফাইল</button>
   <button data-t="apps">📦 অ্যাপ</button>
   <button data-t="webs">🌐 ওয়েবসাইট</button>
-  <button data-t="sett">🔌 সেটিংস</button>
 </nav>
 <main>
   <section class="tab on" id="t-profile">
@@ -79,7 +78,8 @@ input[type=checkbox]{width:auto;margin-right:8px}
       <input id="aImg" placeholder="https://..."><input type="file" accept="image/*" data-for="aImg">
       <label>APK / ডাউনলোড ফাইল * (URL অথবা ফাইল)</label>
       <input id="aFile" placeholder="https://..."><input type="file" data-for="aFile">
-      <label>ভিডিও টিউটোরিয়াল লিংক</label><input id="aVid">
+      <p class="note">সব ফাইল (ছবি, ভিডিও, APK) GitHub-এ যায়। আপলোড শেষ না হওয়া পর্যন্ত অপেক্ষা করুন।</p>
+      <label>ভিডিও টিউটোরিয়াল (YouTube লিংক অথবা ভিডিও ফাইল)</label><input id="aVid" placeholder="https://..."><input type="file" accept="video/*" data-for="aVid">
       <label>বিবরণ (বাংলা) *</label><textarea id="aDesc"></textarea>
       <label><input type="checkbox" id="aFeat">Featured (পিন)</label>
       <button class="btn" id="saveApp" style="width:100%;margin-top:12px">💾 অ্যাপ তৈরি করুন</button>
@@ -96,19 +96,6 @@ input[type=checkbox]{width:auto;margin-right:8px}
       <input id="wImg" placeholder="https://..."><input type="file" accept="image/*" data-for="wImg">
       <label>বিবরণ (বাংলা)</label><textarea id="wDesc"></textarea>
       <button class="btn" id="saveWeb" style="width:100%;margin-top:12px">💾 সেভ করুন</button>
-    </div>
-  </section>
-
-  <section class="tab" id="t-sett">
-    <div class="card">
-      <h3>নিরাপত্তা</h3>
-      <label><input type="checkbox" id="otpOn">লগইনে ইমেইল OTP চালু</label>
-      <p class="note">⚠️ OTP চালু করার আগে সার্ভারে SMTP_USER ও SMTP_PASS সেট থাকতে হবে, নাহলে কোড ইমেইলে যাবে না এবং আপনি লগইন করতে পারবেন না।</p>
-      <button class="btn" id="saveSett" style="width:100%;margin-top:12px">✅ সেভ করুন</button>
-    </div>
-    <div class="card">
-      <h3>পাসওয়ার্ড বদলানো</h3>
-      <p class="note">Render → Environment-এ <b>ADMIN_PASSWORD</b> এর মান বদলে সেভ করুন। রিডেপ্লয় হলে সেটাই নতুন পাসওয়ার্ড হবে।</p>
     </div>
   </section>
 </main>
@@ -128,7 +115,7 @@ async function api(url, opt = {}) {
   const headers = {};
   if (opt.body && !(opt.body instanceof FormData)) headers['Content-Type'] = 'application/json';
   const r = await fetch(url, { ...opt, headers });
-  if (r.status === 401) { location.href = '/login'; throw new Error('সেশন শেষ, আবার লগইন করুন'); }
+  if (r.status === 401) { location.href = '/admin'; throw new Error('সেশন শেষ, আবার লগইন করুন'); }
   const d = await r.json().catch(() => ({}));
   if (!r.ok || d.success === false) throw new Error(d.message || ('ত্রুটি ' + r.status));
   return d;
@@ -229,16 +216,10 @@ $('saveWeb').onclick = () => run(async () => {
   await loadWebs();
 }, '✅ সেভ হয়েছে');
 
-// সেটিংস
-async function loadSett() {
-  const d = await api('/api/settings');
-  $('otpOn').checked = d.settings && d.settings.otp_enabled === 'true';
-}
-$('saveSett').onclick = () => run(() => send('PUT', '/api/settings', { settings: { otp_enabled: $('otpOn').checked } }), '✅ সেটিংস সেভ হয়েছে');
 
-$('logout').onclick = async () => { try { await send('POST', '/api/auth/logout'); } catch (e) {} location.href = '/login'; };
+$('logout').onclick = async () => { try { await send('POST', '/api/auth/logout'); } catch (e) {} location.href = '/admin'; };
 
-run(async () => { await api('/api/auth/me'); await Promise.all([loadProfile(), loadApps(), loadWebs(), loadSett()]); });
+run(async () => { await api('/api/auth/me'); await Promise.all([loadProfile(), loadApps(), loadWebs()]); });
 </script>
 </body>
-  </html>
+               </html>
