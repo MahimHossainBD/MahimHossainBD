@@ -131,15 +131,20 @@ $('tabs').addEventListener('click', e => {
 });
 
 // ফাইল আপলোড → URL ঘরে বসে যায়
-document.addEventListener('change', e => {
+let pending = 0;
+document.addEventListener('change', async e => {
   const f = e.target; if (f.type !== 'file' || !f.files[0]) return;
-  run(async () => {
-    toast('আপলোড হচ্ছে...');
+  let st = f.nextElementSibling;
+  if (!st || !st.classList.contains('ust')) { st = document.createElement('div'); st.className = 'ust note'; f.after(st); }
+  pending++; st.style.color = '#fbbf24'; st.textContent = '⏳ আপলোড হচ্ছে, অপেক্ষা করুন...';
+  try {
     const fd = new FormData(); fd.append('file', f.files[0]);
     const d = await api('/api/upload', { method: 'POST', body: fd });
     $(f.dataset.for).value = d.url;
-    toast('✅ আপলোড সম্পন্ন');
-  });
+    st.style.color = '#22c55e'; st.textContent = '✅ আপলোড সম্পন্ন';
+  } catch (err) {
+    st.style.color = '#ef4444'; st.textContent = '❌ আপলোড হয়নি: ' + err.message;
+  } finally { pending--; }
 });
 
 // প্রোফাইল ও লিংক
@@ -187,12 +192,14 @@ $('appList').addEventListener('click', e => {
 });
 $('saveApp').onclick = () => run(async () => {
   const v = id => $(id).value.trim();
-  if (!v('aName') || !v('aImg') || !v('aFile') || !v('aDesc')) throw new Error('নাম, থাম্বনেইল, ফাইল ও বিবরণ আবশ্যক');
+  if (pending > 0) throw new Error('ফাইল আপলোড এখনো শেষ হয়নি, অপেক্ষা করুন');
+  const miss = [['aName', 'নাম'], ['aImg', 'থাম্বনেইল'], ['aFile', 'APK/ফাইল'], ['aDesc', 'বিবরণ']].filter(x => !v(x[0])).map(x => x[1]);
+  if (miss.length) throw new Error('এগুলো খালি: ' + miss.join(', '));
   await send('POST', '/api/apps', {
     name: v('aName'), category: $('aCat').value, version: v('aVer') || '1.0.0', image_url: v('aImg'),
     file_url: v('aFile'), video_url: v('aVid'), description_bn: v('aDesc'), featured: $('aFeat').checked
   });
-  ['aName', 'aImg', 'aFile', 'aVid', 'aDesc'].forEach(i => $(i).value = ''); $('aFeat').checked = false;
+  ['aName', 'aImg', 'aFile', 'aVid', 'aDesc'].forEach(i => $(i).value = ''); document.querySelectorAll('.ust').forEach(x => x.textContent = ''); document.querySelectorAll('input[type=file]').forEach(x => x.value = ''); $('aFeat').checked = false;
   await loadApps();
 }, '✅ অ্যাপ তৈরি হয়েছে');
 
@@ -222,4 +229,4 @@ $('logout').onclick = async () => { try { await send('POST', '/api/auth/logout')
 run(async () => { await api('/api/auth/me'); await Promise.all([loadProfile(), loadApps(), loadWebs()]); });
 </script>
 </body>
-               </html>
+</html>
