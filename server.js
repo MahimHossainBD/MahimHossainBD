@@ -12,6 +12,7 @@ const rateLimit = require('express-rate-limit');
 const admin = require('firebase-admin');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
@@ -79,7 +80,8 @@ const upload = multer({
 // ------------------------------------------------------------
 // ৩. সিকিউরিটি ও মিডলওয়্যার
 // ------------------------------------------------------------
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(['/api', '/uploads'], cors({ origin: ['https://mahimhossainbd.onrender.com', 'http://localhost:5500', 'http://127.0.0.1:5500'] }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
