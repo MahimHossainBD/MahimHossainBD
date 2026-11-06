@@ -6,39 +6,49 @@
 <meta name="robots" content="noindex,nofollow">
 <title>অ্যাডমিন প্যানেল — MahimHossainBD</title>
 <style>
+:root{--bg:#07090f;--card:rgba(18,24,36,.78);--line:rgba(255,255,255,.08);--txt:#eef2f9;--mut:#8a97ab;--a:#4f8cff;--a2:#8b5cf6;--gold:#f5c76b}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,Helvetica,sans-serif;background:#05070b;color:#fff;min-height:100vh;padding-bottom:60px}
-header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:#0d1118;border-bottom:1px solid rgba(255,255,255,.1);position:sticky;top:0;z-index:5}
-header h1{font-size:16px}
-.btn{border:none;border-radius:9px;padding:10px 14px;font-weight:700;font-size:13px;color:#fff;background:#1677ff;cursor:pointer}
-.btn.red{background:#ef4444}.btn.gray{background:#2a3444}.btn.sm{padding:6px 10px;font-size:12px}
-nav{display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.08)}
-nav button{background:none;border:none;color:#8d9aaa;font-weight:700;font-size:13px;padding:10px 12px;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
-nav button.on{color:#fff;border-color:#1677ff}
-main{max-width:760px;margin:0 auto;padding:18px 16px}
-.tab{display:none}.tab.on{display:block}
-.card{background:#0d1118;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px;margin-bottom:16px}
-h3{font-size:15px;margin-bottom:12px;color:#5aa2ff}
-label{display:block;font-size:11px;font-weight:700;color:#dce5f2;margin:12px 0 6px;text-transform:uppercase}
-input,textarea,select{width:100%;padding:11px 12px;border-radius:9px;background:#070a10;border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14px;outline:none;font-family:inherit}
-input:focus,textarea:focus,select:focus{border-color:#1677ff}
-textarea{min-height:80px;resize:vertical}
-input[type=file]{padding:8px;font-size:12px;margin-top:6px}
-input[type=checkbox]{width:auto;margin-right:8px}
-.row{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:6px;margin-bottom:8px}
-.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:radial-gradient(900px 500px at 10% -10%,rgba(79,140,255,.18),transparent 60%),radial-gradient(800px 500px at 100% 0,rgba(139,92,246,.16),transparent 55%),var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px;-webkit-font-smoothing:antialiased}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;background:rgba(10,14,22,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px}
+.brand i{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--a2));display:grid;place-items:center;font-style:normal;font-size:18px;box-shadow:0 6px 20px rgba(79,140,255,.4)}
+header h1{font-size:15px;font-weight:800;letter-spacing:.2px}
+header h1 small{display:block;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.btn{border:none;border-radius:11px;padding:11px 16px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,var(--a),var(--a2));cursor:pointer;transition:.2s;box-shadow:0 6px 18px rgba(79,140,255,.28);font-family:inherit}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.1)}.btn:active{transform:none}
+.btn.red{background:linear-gradient(135deg,#f0506e,#d93a5a);box-shadow:0 6px 18px rgba(240,80,110,.25)}
+.btn.gray{background:rgba(255,255,255,.07);box-shadow:none;border:1px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:12px;border-radius:9px}
+nav{display:flex;gap:8px;padding:16px 18px 0;overflow-x:auto;max-width:900px;margin:0 auto}
+nav button{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--mut);font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;white-space:nowrap;cursor:pointer;transition:.2s;font-family:inherit}
+nav button:hover{color:var(--txt)}
+nav button.on{color:#fff;background:linear-gradient(135deg,var(--a),var(--a2));border-color:transparent;box-shadow:0 6px 18px rgba(79,140,255,.3)}
+main{max-width:900px;margin:0 auto;padding:18px}
+.tab{display:none}.tab.on{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;backdrop-filter:blur(10px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+h3{font-size:14px;margin-bottom:14px;color:var(--txt);display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+h3::before{content:"";width:4px;height:16px;border-radius:4px;background:linear-gradient(var(--a),var(--a2))}
+label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:14px 0 7px;text-transform:uppercase;letter-spacing:.8px}
+input,textarea,select{width:100%;padding:12px 14px;border-radius:12px;background:rgba(5,8,14,.7);border:1px solid var(--line);color:var(--txt);font-size:14px;outline:none;font-family:inherit;transition:.2s}
+input:focus,textarea:focus,select:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(79,140,255,.18)}
+textarea{min-height:90px;resize:vertical}
+input[type=file]{padding:9px;font-size:12px;margin-top:8px;color:var(--mut)}
+input[type=checkbox]{width:auto;margin-right:8px;accent-color:var(--a)}
+.row{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:8px;margin-bottom:8px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-top:1px solid var(--line)}
 .item:first-of-type{border-top:none}
-.item b{font-size:14px;display:block}.item small{color:#8d9aaa;font-size:12px;word-break:break-all}
+.item b{font-size:14px;display:block}.item small{color:var(--mut);font-size:12px;word-break:break-all}
 .item .acts{display:flex;gap:6px;flex-shrink:0}
-.note{font-size:12px;color:#8d9aaa;margin-top:8px;line-height:1.5}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#22c55e;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;display:none;z-index:20;max-width:90%}
-#toast.bad{background:#ef4444}
-@media(max-width:560px){.row{grid-template-columns:1fr 1fr}.row input:nth-child(3){grid-column:1/3}}
+.note{font-size:12px;color:var(--mut);margin-top:8px;line-height:1.6}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;display:none;z-index:20;max-width:90%;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+#toast.bad{background:linear-gradient(135deg,#f0506e,#d93a5a)}
+@media(max-width:560px){.row{grid-template-columns:1fr 1fr}.row input:nth-child(3){grid-column:1/3}.card{padding:16px}}
 </style>
 </head>
 <body>
 <header>
-  <h1>⚙️ MahimHossainBD অ্যাডমিন</h1>
+  <div class="brand"><i>⚡</i><h1>MahimHossainBD<small>Admin Console</small></h1></div>
   <div><a href="/" class="btn gray sm" style="text-decoration:none;display:inline-block">সাইট</a> <button class="btn red sm" id="logout">লগআউট</button></div>
 </header>
 <nav id="tabs">
@@ -229,4 +239,4 @@ $('logout').onclick = async () => { try { await send('POST', '/api/auth/logout')
 run(async () => { await api('/api/auth/me'); await Promise.all([loadProfile(), loadApps(), loadWebs()]); });
 </script>
 </body>
-</html>
+  </html>
