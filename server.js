@@ -154,6 +154,7 @@ app.get(['/api', '/api/health'], (req, res) => {
         success: true,
         status: 'ONLINE',
         database: rtdb ? 'FIREBASE_CONFIGURED' : 'FIREBASE_NOT_CONFIGURED',
+        storage: (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) ? 'GITHUB' : (process.env.CLOUDINARY_CLOUD_NAME ? 'CLOUDINARY' : 'LOCAL_TEMPORARY'),
         serverTime: new Date().toISOString()
     });
 });
@@ -480,7 +481,7 @@ app.post('/api/upload', requireAdmin, upload.single('file'), async (req, res) =>
             // কোনো ক্লাউড সেট না থাকলে লোকাল (Render ফ্রি-তে রিস্টারে মুছে যায়)
             const fname = `${Date.now()}-${req.file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')}`;
             fs.writeFileSync(path.join(localUploadsDir, fname), req.file.buffer);
-            url = `/uploads/${fname}`;
+            url = `${req.protocol}://${req.get('host')}/uploads/${fname}`;
         }
         res.json({ success: true, url });
     } catch (e) {
