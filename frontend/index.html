@@ -260,8 +260,6 @@
         .email { color:var(--blue); word-break:break-word; font-size:15px; }
 
         footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; color:var(--muted); font-size:13px; }
-        .footer-admin { display:inline-block; margin-top:8px; color:#1a2330; font-size:11px; cursor:default; user-select:none; }
-        .footer-admin:hover { color:#3a4b66; cursor:pointer; }
 
         /* MODALS */
         .modal-overlay {
@@ -275,16 +273,8 @@
             border-radius:20px; padding:26px 24px; width:min(520px,100%);
             max-height:90vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,0.6);
         }
-        .admin-modal { width:min(900px,100%) !important; padding:0 !important; overflow:hidden; display:flex; flex-direction:column; }
-        .admin-header {
-            background:linear-gradient(135deg, rgba(22,119,255,0.18), rgba(139,92,246,0.12));
-            padding:18px 24px; border-bottom:1px solid var(--border);
-            display:flex; justify-content:space-between; align-items:center;
-        }
-        .admin-tabs { display:flex; gap:6px; padding:14px 18px 0; border-bottom:1px solid var(--border); overflow-x:auto; }
         .tab { padding:10px 16px; background:transparent; border:none; color:var(--muted); font-weight:700; cursor:pointer; }
         .tab.active { color:#fff; border-bottom:2px solid var(--blue); }
-        .admin-body { padding:20px 24px; overflow-y:auto; flex:1; }
 
         .field { margin-bottom:14px; }
         .field label { display:block; font-size:12px; color:var(--text); font-weight:700; margin-bottom:7px; text-transform:uppercase; }
@@ -395,163 +385,6 @@
         </main>
     </div>
 
-    <!-- ================= ADMIN LOGIN MODAL ================= -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal">
-            <h2 style="text-align:center; margin-bottom:6px;">🔐 অ্যাডমিন লগইন</h2>
-            <p style="text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px;">MahimHossainBD কন্ট্রোল সেন্টার</p>
-
-            <div id="loginCredentialsForm">
-                <div class="field">
-                    <label>ইউজারনেম</label>
-                    <input type="text" id="loginUser" placeholder="Username (e.g. MrMahimFire)">
-                </div>
-                <div class="field">
-                    <label>পাসওয়ার্ড</label>
-                    <input type="password" id="loginPass" placeholder="Password">
-                </div>
-                <button class="btn-primary" id="loginSubmitBtn">লগইন করুন</button>
-            </div>
-
-            <div id="loginOtpForm" style="display:none;">
-                <div class="field">
-                    <label>Security 6-Digit OTP</label>
-                    <input type="text" id="loginOtpInput" placeholder="123456" maxlength="6">
-                </div>
-                <button class="btn-primary" id="loginOtpSubmitBtn">Verify & Enter</button>
-            </div>
-
-            <button class="btn-ghost" id="loginClose">বাতিল</button>
-            <div id="loginError" style="color:var(--red); font-size:13px; text-align:center; margin-top:10px; display:none;"></div>
-        </div>
-    </div>
-
-    <!-- ================= FULL ADMIN CONTROL PANEL ================= -->
-    <div class="modal-overlay" id="adminModal">
-        <div class="modal admin-modal">
-            <div class="admin-header">
-                <h3>⚙️ MahimHossainBD Production Control</h3>
-                <button id="adminLogoutBtn" style="background:var(--red); color:#fff; padding:6px 14px; border-radius:8px; font-weight:bold;">🚪 Logout</button>
-            </div>
-
-            <div class="admin-tabs">
-                <button class="tab active" data-tab="profile">👤 Profile</button>
-                <button class="tab" data-tab="apps">📦 Apps</button>
-                <button class="tab" data-tab="websites">🌐 Websites</button>
-                <button class="tab" data-tab="server">🔌 Server Settings</button>
-            </div>
-
-            <div class="admin-body">
-                <!-- PROFILE TAB -->
-                <div id="tab-profile" class="tab-content">
-                    <div class="field">
-                        <label>Profile Picture / Logo (Dual Mode: URL or File)</label>
-                        <div class="dual-input-wrap">
-                            <input type="text" id="admPfLogoUrl" placeholder="Direct Image URL (https://...)">
-                            <input type="file" id="admPfLogoFile" accept="image/*">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>Developer Name</label>
-                        <input type="text" id="admPfName">
-                    </div>
-                    <div class="field">
-                        <label>Tagline</label>
-                        <input type="text" id="admPfTagline">
-                    </div>
-                    <div class="field">
-                        <label>Bio (Bengali)</label>
-                        <textarea id="admPfAboutBn"></textarea>
-                    </div>
-                    <div class="field">
-                        <label>Bio (English)</label>
-                        <textarea id="admPfAboutEn"></textarea>
-                    </div>
-                    <div class="field">
-                        <label>Email</label>
-                        <input type="email" id="admPfEmail">
-                    </div>
-                    <button class="btn-primary" id="admSaveProfileBtn">✅ Save Profile Permanently</button>
-                </div>
-
-                <!-- APPS TAB -->
-                <div id="tab-apps" class="tab-content" style="display:none;">
-                    <h4 style="margin-bottom:12px; color:var(--blue);">Add New Application</h4>
-                    <div class="field">
-                        <label>App Name *</label>
-                        <input type="text" id="admAppName">
-                    </div>
-                    <div class="field">
-                        <label>Category</label>
-                        <select id="admAppCat">
-                            <option value="App">App</option>
-                            <option value="Game">Game</option>
-                            <option value="Tool">Tool</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>App Logo / Thumbnail (Dual Mode)</label>
-                        <div class="dual-input-wrap">
-                            <input type="text" id="admAppImgUrl" placeholder="Thumbnail Image URL">
-                            <input type="file" id="admAppImgFile" accept="image/*">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>APK / Download File (Dual Mode)</label>
-                        <div class="dual-input-wrap">
-                            <input type="text" id="admAppFileUrl" placeholder="External Download URL">
-                            <input type="file" id="admAppFileBlob">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>Video Tutorial Link (YouTube / URL)</label>
-                        <input type="text" id="admAppVideo">
-                    </div>
-                    <div class="field">
-                        <label>Description (Bengali)</label>
-                        <textarea id="admAppDesc"></textarea>
-                    </div>
-                    <button class="btn-primary" id="admSaveAppBtn">💾 Create Application</button>
-                </div>
-
-                <!-- WEBSITES TAB -->
-                <div id="tab-websites" class="tab-content" style="display:none;">
-                    <h4 style="margin-bottom:12px; color:var(--purple);">Add Website Entry</h4>
-                    <div class="field">
-                        <label>Website Name</label>
-                        <input type="text" id="admWebName">
-                    </div>
-                    <div class="field">
-                        <label>Website URL</label>
-                        <input type="url" id="admWebUrl">
-                    </div>
-                    <div class="field">
-                        <label>Thumbnail (Dual Mode)</label>
-                        <div class="dual-input-wrap">
-                            <input type="text" id="admWebImgUrl" placeholder="Thumbnail Image URL">
-                            <input type="file" id="admWebImgFile" accept="image/*">
-                        </div>
-                    </div>
-                    <button class="btn-primary" id="admSaveWebBtn">💾 Store Website</button>
-                </div>
-
-                <!-- SERVER SETTINGS TAB -->
-                <div id="tab-server" class="tab-content" style="display:none;">
-                    <h4 style="margin-bottom:10px;">Backend Health & Diagnostics</h4>
-                    <pre id="serverHealthReport" style="background:#000; padding:12px; border-radius:8px; font-size:12px; color:var(--green);"></pre>
-                    <div class="field" style="margin-top:16px;">
-                        <label>Live API Endpoint</label>
-                        <input type="text" id="admApiBaseOverride" value="https://mahimhossainbd.onrender.com/api" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <div style="padding:14px 24px; border-top:1px solid var(--border);">
-                <button class="btn-ghost" id="adminCloseBtn">Close Admin Control</button>
-            </div>
-        </div>
-    </div>
-
     <!-- ================= VIDEO MODAL ================= -->
     <div class="modal-overlay" id="videoModal">
         <div class="video-box">
@@ -566,12 +399,10 @@
 
     <footer>
         © <span id="year"></span> MahimHossainBD. All rights reserved.
-        <br>
-        <span class="footer-admin" id="secretAdmin">· admin ·</span>
     </footer>
 
     <!-- Scripts -->
     <script src="config.js"></script>
     <script src="js/app.js"></script>
 </body>
-                                                 </html>
+</html>
