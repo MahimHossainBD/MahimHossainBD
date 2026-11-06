@@ -20,7 +20,7 @@ const CONFIG = {
     // লাইভ সার্ভারের API লিংক
     API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:10000/api'
-        : `${window.location.origin}/api`,
+        : 'https://mahimhossainbdserver.onrender.com/api',
 
     REQUEST_TIMEOUT_MS: 12000,
 
