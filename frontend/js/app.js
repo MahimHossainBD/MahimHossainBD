@@ -88,15 +88,16 @@ async function probeServer() {
 // 2. Fetch Remote Data
 async function loadPublicData() {
     try {
-        const [pRes, lRes, aRes, wRes] = await Promise.all([
+        const [pRes, aRes, wRes] = await Promise.all([
             window.CONFIG.request('/profile').catch(() => null),
-            window.CONFIG.request('/links').catch(() => null),
             window.CONFIG.request('/apps').catch(() => null),
             window.CONFIG.request('/websites').catch(() => null)
         ]);
 
-        if (pRes && pRes.data) globalProfile = pRes.data;
-        if (lRes && lRes.data) globalLinks = lRes.data;
+        if (pRes) {
+            globalProfile = pRes.profile || {};
+            globalLinks = pRes.links || [];
+        }
         if (aRes && aRes.data) globalApps = aRes.data;
         if (wRes && wRes.data) globalWebsites = wRes.data;
 
