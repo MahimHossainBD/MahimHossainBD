@@ -200,6 +200,8 @@ footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; 
 </footer>
 
 <script>
+        // ফ্রন্টএন্ড আলাদা ডোমেইনে থাকলে ডাটা আসবে সার্ভার থেকে
+        const API_BASE = location.hostname === 'mahimhossainbd.onrender.com' ? 'https://mahimhossainbdserver.onrender.com' : '';
 let currentLang = 'bn';
 let cachedProfile = {
     name: 'MahimHossainBD',
@@ -217,7 +219,7 @@ async function initSite() {
 
         // ১. প্রোফাইল লোড
         try {
-            const res = await fetch('/api/profile');
+            const res = await fetch(API_BASE + '/api/profile');
             const pData = await res.json();
             if (pData && pData.success && pData.profile) {
                 cachedProfile = pData.profile;
@@ -250,7 +252,7 @@ async function initSite() {
 
         // ২. অ্যাপস লোড
         try {
-            const aRes = await fetch('/api/apps');
+            const aRes = await fetch(API_BASE + '/api/apps');
             const aData = await aRes.json();
             if (aData && aData.success && aData.data && aData.data.length > 0) {
                 const aGrid = document.getElementById('appsGrid');
@@ -276,7 +278,7 @@ async function initSite() {
 
         // ৩. ওয়েবসাইট লোড
         try {
-            const wRes = await fetch('/api/websites');
+            const wRes = await fetch(API_BASE + '/api/websites');
             const wData = await wRes.json();
             if (wData && wData.success && wData.data && wData.data.length > 0) {
                 const wGrid = document.getElementById('webGrid');
@@ -340,4 +342,4 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 initSite();
 </script>
 </body>
-</html>
+    </html>
