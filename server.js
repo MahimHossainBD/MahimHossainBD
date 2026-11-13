@@ -12,7 +12,6 @@ const rateLimit = require('express-rate-limit');
 const admin = require('firebase-admin');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
@@ -80,11 +79,24 @@ const upload = multer({
 // ------------------------------------------------------------
 // ৩. সিকিউরিটি ও মিডলওয়্যার
 // ------------------------------------------------------------
-app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(['/api', '/uploads'], cors({ origin: ['https://mahimhossainbd.onrender.com', 'http://localhost:5500', 'http://127.0.0.1:5500'] }));
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+
+// ফ্রন্টএন্ড সাইট আলাদা ডোমেইনে থাকলে শুধু পাবলিক ডাটা (GET) পড়ার অনুমতি; অ্যাডমিন/লেখার API এতে খোলে না
+const FRONTEND_ORIGINS = (process.env.FRONTEND_URL || 'https://mahimhossainbd.onrender.com')
+    .split(',').map(o => o.trim().replace(/\/$/, '')).filter(Boolean);
+app.use('/api', (req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && FRONTEND_ORIGINS.includes(origin) && (req.method === 'GET' || req.method === 'OPTIONS')) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        if (req.method === 'OPTIONS') return res.sendStatus(204);
+    }
+    next();
+});
 
 // রেট লিমিটার (অতিরিক্ত আক্রমণ ও স্প্যাম রোধে)
 const apiLimiter = rateLimit({
@@ -154,7 +166,6 @@ app.get(['/api', '/api/health'], (req, res) => {
         success: true,
         status: 'ONLINE',
         database: rtdb ? 'FIREBASE_CONFIGURED' : 'FIREBASE_NOT_CONFIGURED',
-        storage: (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) ? 'GITHUB' : (process.env.CLOUDINARY_CLOUD_NAME ? 'CLOUDINARY' : 'LOCAL_TEMPORARY'),
         serverTime: new Date().toISOString()
     });
 });
@@ -481,7 +492,7 @@ app.post('/api/upload', requireAdmin, upload.single('file'), async (req, res) =>
             // কোনো ক্লাউড সেট না থাকলে লোকাল (Render ফ্রি-তে রিস্টারে মুছে যায়)
             const fname = `${Date.now()}-${req.file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')}`;
             fs.writeFileSync(path.join(localUploadsDir, fname), req.file.buffer);
-            url = `${req.protocol}://${req.get('host')}/uploads/${fname}`;
+            url = `/uploads/${fname}`;
         }
         res.json({ success: true, url });
     } catch (e) {
