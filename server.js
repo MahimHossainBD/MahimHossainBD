@@ -93,6 +93,7 @@ app.use('/api', (req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Vary', 'Origin');
         res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         if (req.method === 'OPTIONS') return res.sendStatus(204);
     }
     next();
@@ -107,7 +108,7 @@ const apiLimiter = rateLimit({
 app.use('/api/', apiLimiter);
 
 // স্ট্যাটিক ফ্রন্টএন্ড এবং লোকাল আপলোডস ফোল্ডার
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'frontend')));
 const localUploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(localUploadsDir)) {
     fs.mkdirSync(localUploadsDir, { recursive: true });
@@ -137,7 +138,7 @@ function requireAdmin(req, res, next) {
 
 // ১. "/" — মূল ওয়েবসাইট পেজ
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // "/admin" — একমাত্র প্রবেশপথ: লগইন থাকলে প্যানেল, না থাকলে Firebase লগইন ফর্ম
@@ -166,6 +167,7 @@ app.get(['/api', '/api/health'], (req, res) => {
         success: true,
         status: 'ONLINE',
         database: rtdb ? 'FIREBASE_CONFIGURED' : 'FIREBASE_NOT_CONFIGURED',
+        storage: (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) ? 'GITHUB' : (process.env.CLOUDINARY_CLOUD_NAME ? 'CLOUDINARY' : 'LOCAL'),
         serverTime: new Date().toISOString()
     });
 });
@@ -262,7 +264,18 @@ app.get('/api/profile', async (req, res) => {
     } catch (e) {
         console.warn('[Profile]', e.message);
     }
-    res.json({ success: true, profile, links });
+    res.json({ success: true, profile, data: profile, links });
+});
+
+app.get('/api/links', async (req, res) => {
+    let links = DEFAULT_LINKS;
+    try {
+        const l = await getDb().ref('links').once('value');
+        if (l.exists()) links = Object.values(l.val());
+    } catch (e) {
+        console.warn('[Links]', e.message);
+    }
+    res.json({ success: true, data: links });
 });
 
 app.put('/api/profile', requireAdmin, async (req, res) => {
