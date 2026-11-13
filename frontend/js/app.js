@@ -1,7 +1,7 @@
 /* ============================================================
    MahimHossainBD - Production Client Script
    Bilingual engine, real API synchronization, local fallback, 
-   dual-mode media uploaders.
+   dual-mode media uploaders, and secure admin interaction.
    ============================================================ */
 
 const I18N = {
@@ -88,16 +88,15 @@ async function probeServer() {
 // 2. Fetch Remote Data
 async function loadPublicData() {
     try {
-        const [pRes, aRes, wRes] = await Promise.all([
+        const [pRes, lRes, aRes, wRes] = await Promise.all([
             window.CONFIG.request('/profile').catch(() => null),
+            window.CONFIG.request('/links').catch(() => null),
             window.CONFIG.request('/apps').catch(() => null),
             window.CONFIG.request('/websites').catch(() => null)
         ]);
 
-        if (pRes) {
-            globalProfile = pRes.profile || {};
-            globalLinks = pRes.links || [];
-        }
+        if (pRes && pRes.data) globalProfile = pRes.data;
+        if (lRes && lRes.data) globalLinks = lRes.data;
         if (aRes && aRes.data) globalApps = aRes.data;
         if (wRes && wRes.data) globalWebsites = wRes.data;
 
