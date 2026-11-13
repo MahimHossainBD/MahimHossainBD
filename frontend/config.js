@@ -17,19 +17,21 @@ const firebaseConfig = {
 const CONFIG = {
     firebaseConfig: firebaseConfig,
 
-    // লাইভ সার্ভারের API লিংক
-    API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    // 👇 আপনার সার্ভারের লিংক (শেষে / দেবেন না)
+    SERVER_URL: 'https://mahimhossainbdserver.onrender.com',
+
+    API_BASE_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:10000/api'
         : 'https://mahimhossainbdserver.onrender.com/api',
 
-    REQUEST_TIMEOUT_MS: 12000,
+    REQUEST_TIMEOUT_MS: 45000, // Render ফ্রি সার্ভার ঘুম থেকে উঠতে সময় নেয়
 
     async request(endpoint, options = {}) {
         const url = `${this.API_BASE_URL}${endpoint}`;
         const token = localStorage.getItem('mhb_token');
 
         const headers = {
-            'Content-Type': 'application/json',
+            ...(options.body ? { 'Content-Type': 'application/json' } : {}),
             ...(options.headers || {})
         };
 

@@ -260,6 +260,8 @@
         .email { color:var(--blue); word-break:break-word; font-size:15px; }
 
         footer { border-top:1px solid var(--border); padding:22px 0; text-align:center; color:var(--muted); font-size:13px; }
+        .footer-admin { display:inline-block; margin-top:8px; color:#1a2330; font-size:11px; cursor:default; user-select:none; }
+        .footer-admin:hover { color:#3a4b66; cursor:pointer; }
 
         /* MODALS */
         .modal-overlay {
@@ -273,8 +275,16 @@
             border-radius:20px; padding:26px 24px; width:min(520px,100%);
             max-height:90vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,0.6);
         }
+        .admin-modal { width:min(900px,100%) !important; padding:0 !important; overflow:hidden; display:flex; flex-direction:column; }
+        .admin-header {
+            background:linear-gradient(135deg, rgba(22,119,255,0.18), rgba(139,92,246,0.12));
+            padding:18px 24px; border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .admin-tabs { display:flex; gap:6px; padding:14px 18px 0; border-bottom:1px solid var(--border); overflow-x:auto; }
         .tab { padding:10px 16px; background:transparent; border:none; color:var(--muted); font-weight:700; cursor:pointer; }
         .tab.active { color:#fff; border-bottom:2px solid var(--blue); }
+        .admin-body { padding:20px 24px; overflow-y:auto; flex:1; }
 
         .field { margin-bottom:14px; }
         .field label { display:block; font-size:12px; color:var(--text); font-weight:700; margin-bottom:7px; text-transform:uppercase; }
@@ -399,10 +409,11 @@
 
     <footer>
         © <span id="year"></span> MahimHossainBD. All rights reserved.
+        <br>
     </footer>
 
     <!-- Scripts -->
     <script src="config.js"></script>
     <script src="js/app.js"></script>
 </body>
-</html>
+                                                 </html>
